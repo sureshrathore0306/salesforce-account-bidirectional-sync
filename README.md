@@ -31,12 +31,12 @@ Feb 5th of 2021 and it's eleven o'clock in India, then you could use the followi
 
 #### SalesForce Connector configuration for company A
 
-+ sfdc.a.username `organization1@mail.com`
++ sfdc.a.username `companyA@mail.com`
 + sfdc.a.password `password`
 + sfdc.a.securityToken `avsfwCUl7apQs56Xq2AKaaa`
 
 #### SalesForce Connector configuration for company B
 
-+ sfdc.b.username `organization1@mail.com`
++ sfdc.b.username `companyB@mail.com`
 + sfdc.b.password `password`
 + sfdc.b.securityToken `ces56arl7apQs56XTddf3aa`
