@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+    xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+
+    <global-property doc:name="Global Property" name="mule.env" value="dev" />
+
+    <configuration-properties file="mule.${mule.env}.properties" doc:id="27764bfa-1d6e-4112-8b4f-e5395cb008c1" doc:name="Configuration properties" />
+    <configuration-properties file="common.properties" doc:id="d5773404-5f1d-4b79-ba53-030db5f3d774" doc:name="Configuration properties" />
+
+    <os:object-store name="SchedulerStatus" persistent="false" doc:id="e9862648-2cb3-47db-a763-9275db0a1854" doc:name="Object store" />
+    <os:object-store name="watermarkStoreA" doc:name="Object store" />
+    <os:object-store name="watermarkStoreB" doc:name="Object store" />
+	<salesforce:sfdc-config name="Salesforce_Sfdc_B_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
+		<salesforce:basic-connection username="${salesforce.b.username}" password="${salesforce.b.password}" securityToken="${salesforce.b.securityToken}" url="${authorization.url}"/>
+	</salesforce:sfdc-config>
+	<salesforce:sfdc-config name="Salesforce_Sfdc_A_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
+		<salesforce:basic-connection username="${salesforce.a.username}" password="${salesforce.a.password}" securityToken="${salesforce.a.securityToken}" url="${authorization.url}"/>
+	</salesforce:sfdc-config>
+
+</mule>

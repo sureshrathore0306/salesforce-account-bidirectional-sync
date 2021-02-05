@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+	<flow name="fromSalesforceAtoSalesforceB" doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
+		<batch:job jobName="userFromAtoB-Batch_Job" doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
+			<batch:process-records>
+				<batch:step name="queryAccountFromBStep" doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
+					<salesforce:query-single doc:name="Query Account from Salesforce B" doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878"
+						target="IdDateInB" config-ref="Salesforce_Sfdc_B_config">
+						<salesforce:salesforce-query>SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c'</salesforce:salesforce-query>
+						<salesforce:parameters><![CDATA[#[output applicaton/java
+---
+{
+	"email__c" : payload.email__c
+}]]]></salesforce:parameters>
+					</salesforce:query-single>
+					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="509db176-21ab-4b21-8bda-f52b010254e0" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload ++ {
+	Id: if(vars.IdDateInB !=null) vars.IdDateInB.Id else null,
+	LastModifiedDateB: if(vars.IdDateInB !=null) vars.IdDateInB.LastModifiedDate else null
+	}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				
+</batch:step>
+				<batch:step name="upsertInSalesforceBStep" doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
+					acceptExpression="payload.Id == null  or (payload.LastModifiedDateB &lt; payload.LastModifiedDate)">
+					<batch:aggregator doc:name="Batch Aggregator"
+						doc:id="1df6c548-87de-4cfe-9ebb-412cab2b1499" size="${page.size}">
+						<ee:transform doc:name="Prepare Account for Upsert"
+							doc:id="5263e05a-1baf-4e7d-befd-a210be595768">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload map ((item) -> {
+	email__c: item.email__c,
+	Name: item.Name,
+	(Id: item.Id) if (item.Id != null)
+})]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<logger level="INFO" doc:name="Log records to upsert"
+							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
+---
+payload]" />
+						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce B"
+							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732" config-ref="Salesforce_Sfdc_B_config"/>
+						<logger level="INFO" doc:name="Log Salesforce response"
+							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
+---
+payload]" />
+					</batch:aggregator>
+				</batch:step>
+			
+</batch:process-records>
+			<batch:on-complete>
+				<os:store key="syncState" doc:name="Set sync state to fromB"
+					doc:id="f08de372-2fb9-4aef-80ca-f6da2241fc75" objectStore="SchedulerStatus">
+					<os:value><![CDATA[fromB]]></os:value>
+				</os:store>
+			</batch:on-complete>
+		</batch:job>
+	
+</flow>
+
+<flow name="fromSalesforceBtoSalesforceA" doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
+		<batch:job jobName="userFromBtoA-Batch_Job" doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
+			<batch:process-records>
+				<batch:step name="queryAccountFromAStep" doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
+					<salesforce:query-single doc:name="Query Account from Salesforce A" doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d"
+						target="IdDateInA" config-ref="Salesforce_Sfdc_A_config">
+						<salesforce:salesforce-query>SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c'</salesforce:salesforce-query>
+						<salesforce:parameters><![CDATA[#[output applicaton/java
+---
+{
+	"email__c" : payload.email__c
+}]]]></salesforce:parameters>
+					</salesforce:query-single>
+					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="f66fd77d-13c7-4d13-a355-3e132873900e" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload ++ {
+	Id: if(vars.IdDateInA !=null) vars.IdDateInA.Id else null,
+	LastModifiedDateA: if(vars.IdDateInA !=null) vars.IdDateInA.LastModifiedDate else null
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				
+
+</batch:step>
+				<batch:step name="upsertInSalesforceAStep" doc:id="8d0f79fc-9e95-4bea-8e85-0e74dc6c7a80"
+					acceptExpression="payload.Id == null  or (payload.LastModifiedDateA &lt; payload.LastModifiedDate)">
+					<batch:aggregator doc:name="Batch Aggregator"
+						doc:id="5be842bf-b2d7-49cf-9796-13eb053fbd6c" size="${page.size}">
+						<ee:transform doc:name="Prepare Account  for Upsert"
+							doc:id="5edef759-31d6-49af-a462-c9b94df858df">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload map ((item) -> {
+	email__c: item.email__c,
+	Name: item.Name,
+	(Id: item.Id) if (item.Id != null)	
+})]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce A"
+							doc:id="c46631db-c257-4332-80b3-8103dbb7901b" config-ref="Salesforce_Sfdc_A_config"/>
+						<logger level="INFO" doc:name="Log Salesforce response"
+							doc:id="b3a9e028-ba2a-4af5-8d60-d354c9a079c1" message="#[output application/json
+---
+payload]" />
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete>
+				<os:store key="syncState" doc:name="Set sync state to fromA"
+					doc:id="7a81a445-1f9c-4ee3-a4b9-c6089b12f9df" objectStore="SchedulerStatus">
+					<os:value><![CDATA[fromA]]></os:value>
+				</os:store>
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+
+
+</mule>
+
+	
+	
