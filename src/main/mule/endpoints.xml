@@ -24,7 +24,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		</os:retrieve>
 		<choice doc:name="SyncState?" doc:id="b4703d83-780b-4e2d-bf5d-51b1566d66e2">
 			<when
-				expression="#[(vars.syncState != 'running' and vars.syncState == 'fromA') or vars.syncState == null]">
+				expression="#[vars.syncState == 'fromA']">
 				<logger level="INFO" doc:name="running from A"
 					doc:id="d3619f57-3984-49cf-b45c-a9b36047d05d" message="running from A" />
 				<os:store key="syncState" doc:name="Set sync state to running"
@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<flow-ref doc:name="fromSalesforceAtoSalesforceB" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f"
 					name="fromSalesforceAtoSalesforceB" />
 			</when>
-			<when expression="#[vars.syncState != 'running' and vars.syncState == 'fromB']">
+			<when expression="#[vars.syncState == 'fromB']">
 				<logger level="INFO" doc:name="running from B"
 					doc:id="d8b84a80-a7ae-4f3e-aafe-1ac5a4f71e7c" message="running from B" />
 				<os:store key="syncState" doc:name="Set sync state to running"
