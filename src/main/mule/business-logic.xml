@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 
-	<flow name="fromSalesforceAtoSalesforceB" doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
+	<flow name="sf-from-salesforceA-to-salesforceB" doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
 		<batch:job jobName="userFromAtoB-Batch_Job" doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
 			<batch:process-records>
 				<batch:step name="queryAccountFromBStep" doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
@@ -55,13 +55,13 @@ payload map ((item) -> {
 })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="Log records to upsert"
+						<logger level="INFO" doc:name="LOG records to upsert"
 							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
 ---
 payload]" />
 						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce B"
 							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732" config-ref="Salesforce_Sfdc_B_config"/>
-						<logger level="INFO" doc:name="Log Salesforce response"
+						<logger level="INFO" doc:name="LOG Salesforce response"
 							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
 ---
 payload]" />
@@ -76,10 +76,17 @@ payload]" />
 				</os:store>
 			</batch:on-complete>
 		</batch:job>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4da0508d-721a-4f16-88c0-ef3069db4d51" >
+				<os:store doc:name="Set sync state to fromA" doc:id="45b390c3-e0f0-4f19-bb26-e2853a08655f" key="syncState" objectStore="SchedulerStatus">
+					<os:value ><![CDATA[fromA]]></os:value>
+				</os:store>
+			</on-error-continue>
+		</error-handler>
 	
 </flow>
 
-<flow name="fromSalesforceBtoSalesforceA" doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
+<flow name="sf-from-salesforceB-to-salesforceA" doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
 		<batch:job jobName="userFromBtoA-Batch_Job" doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
 			<batch:process-records>
 				<batch:step name="queryAccountFromAStep" doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
@@ -123,9 +130,12 @@ payload map ((item) -> {
 })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
+						<logger level="INFO" doc:name="LOG records to upsert" doc:id="bd422c3a-edd9-4b72-8fc9-f5478c8ebbbd" message="#[output application/json
+---
+payload]"/>
 						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce A"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b" config-ref="Salesforce_Sfdc_A_config"/>
-						<logger level="INFO" doc:name="Log Salesforce response"
+						<logger level="INFO" doc:name="LOG Salesforce response"
 							doc:id="b3a9e028-ba2a-4af5-8d60-d354c9a079c1" message="#[output application/json
 ---
 payload]" />
@@ -139,6 +149,13 @@ payload]" />
 				</os:store>
 			</batch:on-complete>
 		</batch:job>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0e9b1e49-2e78-4fe1-a646-ac8021497488" >
+				<os:store doc:name="Set sync state to fromB" doc:id="2ca0da18-22be-423a-be03-ab18d3cf885f" key="syncState" objectStore="SchedulerStatus">
+					<os:value ><![CDATA[fromB]]></os:value>
+				</os:store>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 
 
