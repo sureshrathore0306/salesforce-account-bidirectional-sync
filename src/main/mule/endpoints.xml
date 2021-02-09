@@ -25,31 +25,31 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<choice doc:name="SyncState?" doc:id="b4703d83-780b-4e2d-bf5d-51b1566d66e2">
 			<when
 				expression="#[vars.syncState == 'fromA']">
-				<logger level="INFO" doc:name="running from A"
+				<logger level="INFO" doc:name="LOG running from A"
 					doc:id="d3619f57-3984-49cf-b45c-a9b36047d05d" message="running from A" />
 				<os:store key="syncState" doc:name="Set sync state to running"
 					doc:id="604c37b2-002b-4768-9407-466ac5183c60" objectStore="SchedulerStatus">
 					<os:value><![CDATA[running]]></os:value>
 				</os:store>
-				<flow-ref doc:name="sfdcQueryFlowA" doc:id="79292a4f-778d-403a-8f8c-df766d5d42e6"
-					name="sfdcQueryFlowA" />
-				<flow-ref doc:name="fromSalesforceAtoSalesforceB" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f"
-					name="fromSalesforceAtoSalesforceB" />
+				<flow-ref doc:name="sf-sfdc-query-flowA" doc:id="79292a4f-778d-403a-8f8c-df766d5d42e6"
+					name="sf-sfdc-query-flowA" />
+				<flow-ref doc:name="sf-from-salesforceA-to-salesforceB" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f"
+					name="sf-from-salesforceA-to-salesforceB" />
 			</when>
 			<when expression="#[vars.syncState == 'fromB']">
-				<logger level="INFO" doc:name="running from B"
+				<logger level="INFO" doc:name="LOG running from B"
 					doc:id="d8b84a80-a7ae-4f3e-aafe-1ac5a4f71e7c" message="running from B" />
 				<os:store key="syncState" doc:name="Set sync state to running"
 					doc:id="2ed014a1-a76d-48d0-8a6b-32d753b96500" objectStore="SchedulerStatus">
 					<os:value><![CDATA[running]]></os:value>
 				</os:store>
-				<flow-ref doc:name="sfdcQueryFlowB" doc:id="c2ebe0d5-29f0-4c85-8ac5-9a2ef9948950"
-					name="sfdcQueryFlowB" />
-				<flow-ref doc:name="fromSalesforceBtoSalesforceA" doc:id="f2f219ed-b182-4c59-be37-24188b2cf9c6"
-					name="fromSalesforceBtoSalesforceA" />
+				<flow-ref doc:name="sf-sfdc-query-flowB" doc:id="c2ebe0d5-29f0-4c85-8ac5-9a2ef9948950"
+					name="sf-sfdc-query-flowB" />
+				<flow-ref doc:name="sf-from-salesforceB-to-salesforceA" doc:id="f2f219ed-b182-4c59-be37-24188b2cf9c6"
+					name="sf-from-salesforceB-to-salesforceA" />
 			</when>
 			<otherwise>
-				<logger level="INFO" doc:name="Batch running"
+				<logger level="INFO" doc:name="LOG batch running"
 					doc:id="bf955eec-4baf-4836-b7fd-7d77ff5ebcb1" message="Batch running" />
 			</otherwise>
 		</choice>
@@ -62,14 +62,14 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="sfdcQueryFlowA">
+	<flow name="sf-sfdc-query-flowA">
 		<os:retrieve key="watermark" objectStore="watermarkStoreA"
 			target="lastQueryDateA" doc:name="Retrieve lastQueryDateA">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance A" config-ref="Salesforce_Sfdc_A_config">
-			<salesforce:salesforce-query>SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate &gt; :lastModifiedDate AND LastModifiedById != '0055g000002q2WPAAY'</salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
+AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.a.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -83,15 +83,22 @@ payload]"/>
 			objectStore="watermarkStoreA" doc:name="Store lastQueryDateA">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateA]]]></os:value>
 		</os:store>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b3eff7a8-fd88-4b2e-9c60-702403b9a5e8" >
+				<os:store doc:name="Set sync state to fromA" doc:id="f3b320bb-2e86-457a-82ee-120c22489fce" key="syncState" objectStore="SchedulerStatus">
+					<os:value ><![CDATA[fromA]]></os:value>
+				</os:store>
+			</on-error-continue>
+		</error-handler>
 	</flow>
-	<flow name="sfdcQueryFlowB">
+	<flow name="sf-sfdc-query-flowB">
 		<os:retrieve key="watermark" objectStore="watermarkStoreB"
 			target="lastQueryDateB" doc:name="Retrieve lastQueryDateB">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance B" config-ref="Salesforce_Sfdc_B_config">
-			<salesforce:salesforce-query>SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate &gt; :lastModifiedDate AND LastModifiedById != '0055g000003V2roAAC'</salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
+AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.b.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -105,6 +112,13 @@ payload]" />
 			doc:id="b995ea0e-c89f-40ac-9f6e-0e06096f5abc" objectStore="watermarkStoreB">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateB]]]></os:value>
 		</os:store>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7871de9e-a21a-415a-8366-eae8b679dca7" >
+				<os:store doc:name="Set sync state to fromB" doc:id="a6ceb2fe-8b25-453b-8409-cc935945061e" key="syncState" objectStore="SchedulerStatus">
+					<os:value ><![CDATA[fromB]]></os:value>
+				</os:store>
+			</on-error-continue>
+		</error-handler>
 	
 </flow>
 </mule>

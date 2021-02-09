@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:os="http://www.mulesoft.org/schema/mule/os"
-    xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
 
     <global-property doc:name="Global Property" name="mule.env" value="dev" />
 
@@ -12,10 +13,13 @@
     <os:object-store name="watermarkStoreA" doc:name="Object store" />
     <os:object-store name="watermarkStoreB" doc:name="Object store" />
 	<salesforce:sfdc-config name="Salesforce_Sfdc_B_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
-		<salesforce:basic-connection username="${salesforce.b.username}" password="${salesforce.b.password}" securityToken="${salesforce.b.securityToken}" url="${authorization.url}"/>
+		<salesforce:basic-connection username="${secure::salesforce.b.username}" password="${secure::salesforce.b.password}" securityToken="${secure::salesforce.b.securityToken}" url="${authorization.url}"/>
 	</salesforce:sfdc-config>
 	<salesforce:sfdc-config name="Salesforce_Sfdc_A_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
-		<salesforce:basic-connection username="${salesforce.a.username}" password="${salesforce.a.password}" securityToken="${salesforce.a.securityToken}" url="${authorization.url}"/>
+		<salesforce:basic-connection username="${secure::salesforce.a.username}" password="${secure::salesforce.a.password}" securityToken="${secure::salesforce.a.securityToken}" url="${authorization.url}"/>
 	</salesforce:sfdc-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey" >
+		<secure-properties:encrypt algorithm="Blowfish" useRandomIVs="true" />
+	</secure-properties:config>
 
 </mule>

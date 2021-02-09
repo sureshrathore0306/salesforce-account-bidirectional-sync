@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -7,7 +7,7 @@
 		<version>2.1.15</version>
 	</parent>
 	<properties>
-		<app.runtime>4.3.0-20210105</app.runtime>
+		<app.runtime>4.3.0-20210119</app.runtime>
 		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
 	</properties>
 	<artifactId>sfdc2sfdc</artifactId>
@@ -25,7 +25,13 @@
 			<artifactId>mule-salesforce-connector</artifactId>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-	</dependencies>
+		<dependency>
+            <groupId>com.mulesoft.modules</groupId>
+            <artifactId>mule-secure-configuration-property-module</artifactId>
+            <version>1.2.3</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    </dependencies>
 	<repositories>
 		<repository>
 			<id>anypoint-exchange</id>
