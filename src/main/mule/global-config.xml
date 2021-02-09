@@ -13,10 +13,10 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
     <os:object-store name="watermarkStoreA" doc:name="Object store" />
     <os:object-store name="watermarkStoreB" doc:name="Object store" />
 	<salesforce:sfdc-config name="Salesforce_Sfdc_B_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
-		<salesforce:basic-connection username="${secure::salesforce.b.username}" password="${secure::salesforce.b.password}" securityToken="${secure::salesforce.b.securityToken}" url="${authorization.url}"/>
+		<salesforce:basic-connection username="${salesforce.b.username}" password="${secure::salesforce.b.password}" securityToken="${secure::salesforce.b.securityToken}" url="${authorization.url}"/>
 	</salesforce:sfdc-config>
 	<salesforce:sfdc-config name="Salesforce_Sfdc_A_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
-		<salesforce:basic-connection username="${secure::salesforce.a.username}" password="${secure::salesforce.a.password}" securityToken="${secure::salesforce.a.securityToken}" url="${authorization.url}"/>
+		<salesforce:basic-connection username="${salesforce.a.username}" password="${secure::salesforce.a.password}" securityToken="${secure::salesforce.a.securityToken}" url="${authorization.url}"/>
 	</salesforce:sfdc-config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey" >
 		<secure-properties:encrypt algorithm="Blowfish" useRandomIVs="true" />

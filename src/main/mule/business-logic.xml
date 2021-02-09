@@ -16,15 +16,15 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<batch:job jobName="userFromAtoB-Batch_Job" doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
 			<batch:process-records>
 				<batch:step name="queryAccountFromBStep" doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
-					<salesforce:query-single doc:name="Query Account from Salesforce B" doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878"
-						target="IdDateInB" config-ref="Salesforce_Sfdc_B_config">
-						<salesforce:salesforce-query>SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c'</salesforce:salesforce-query>
+					<salesforce:query doc:name="Query Single Account from Salesforce B" doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878"
+						target="IdDateInB" config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
 	"email__c" : payload.email__c
 }]]]></salesforce:parameters>
-					</salesforce:query-single>
+					</salesforce:query>
 					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="509db176-21ab-4b21-8bda-f52b010254e0" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -36,6 +36,7 @@ payload ++ {
 	}]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db" message="#[output application/json --- payload]"/>
 				
 </batch:step>
 				<batch:step name="upsertInSalesforceBStep" doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
@@ -59,8 +60,8 @@ payload map ((item) -> {
 							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
 ---
 payload]" />
-						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce B"
-							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732" config-ref="Salesforce_Sfdc_B_config"/>
+						<salesforce:upsert externalIdFieldName="Id" doc:name="Upsert Account in Salesforce B"
+							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732" config-ref="Salesforce_Sfdc_B_config" objectType="Account"/>
 						<logger level="INFO" doc:name="LOG Salesforce response"
 							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
 ---
@@ -90,15 +91,15 @@ payload]" />
 		<batch:job jobName="userFromBtoA-Batch_Job" doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
 			<batch:process-records>
 				<batch:step name="queryAccountFromAStep" doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
-					<salesforce:query-single doc:name="Query Account from Salesforce A" doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d"
-						target="IdDateInA" config-ref="Salesforce_Sfdc_A_config">
-						<salesforce:salesforce-query>SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c'</salesforce:salesforce-query>
+					<salesforce:query doc:name="Query Single Account from Salesforce A" doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d"
+						target="IdDateInA" config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
 	"email__c" : payload.email__c
 }]]]></salesforce:parameters>
-					</salesforce:query-single>
+					</salesforce:query>
 					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="f66fd77d-13c7-4d13-a355-3e132873900e" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -133,8 +134,8 @@ payload map ((item) -> {
 						<logger level="INFO" doc:name="LOG records to upsert" doc:id="bd422c3a-edd9-4b72-8fc9-f5478c8ebbbd" message="#[output application/json
 ---
 payload]"/>
-						<salesforce:upsert externalIdFieldName="Id" type="Account" doc:name="Upsert Account in Salesforce A"
-							doc:id="c46631db-c257-4332-80b3-8103dbb7901b" config-ref="Salesforce_Sfdc_A_config"/>
+						<salesforce:upsert externalIdFieldName="Id" doc:name="Upsert Account in Salesforce A"
+							doc:id="c46631db-c257-4332-80b3-8103dbb7901b" config-ref="Salesforce_Sfdc_A_config" objectType="Account"/>
 						<logger level="INFO" doc:name="LOG Salesforce response"
 							doc:id="b3a9e028-ba2a-4af5-8d60-d354c9a079c1" message="#[output application/json
 ---
