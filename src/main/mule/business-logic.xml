@@ -2,8 +2,10 @@
 
 <mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
-	xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
@@ -12,12 +14,17 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 
-	<flow name="sf-from-salesforceA-to-salesforceB" doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
-		<batch:job jobName="userFromAtoB-Batch_Job" doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
+	<flow name="sf-from-salesforceA-to-salesforceB"
+		doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
+		<batch:job jobName="userFromAtoB-Batch_Job"
+			doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
 			<batch:process-records>
-				<batch:step name="queryAccountFromBStep" doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
-					<salesforce:query doc:name="Query Single Account from Salesforce B" doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878"
-						target="IdDateInB" config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
+				<batch:step name="queryAccountFromBStep"
+					doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
+					<salesforce:query
+						doc:name="Query Single Account from Salesforce B"
+						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
+						config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -25,9 +32,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	"email__c" : payload.email__c
 }]]]></salesforce:parameters>
 					</salesforce:query>
-					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="509db176-21ab-4b21-8bda-f52b010254e0" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+					<ee:transform
+						doc:name="Add SFDC Account Id to payload"
+						doc:id="509db176-21ab-4b21-8bda-f52b010254e0">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ---
 payload ++ {
@@ -36,10 +45,12 @@ payload ++ {
 	}]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Logger" doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db" message="#[output application/json --- payload]"/>
-				
-</batch:step>
-				<batch:step name="upsertInSalesforceBStep" doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
+					<logger level="INFO" doc:name="Logger"
+						doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db"
+						message="#[output application/json --- payload]" />
+				</batch:step>
+				<batch:step name="upsertInSalesforceBStep"
+					doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateB &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
 						doc:id="1df6c548-87de-4cfe-9ebb-412cab2b1499" size="${page.size}">
@@ -56,43 +67,38 @@ payload map ((item) -> {
 })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="LOG records to upsert"
-							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
----
-payload]" />
-						<salesforce:upsert externalIdFieldName="Id" doc:name="Upsert Account in Salesforce B"
-							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732" config-ref="Salesforce_Sfdc_B_config" objectType="Account"/>
-						<logger level="INFO" doc:name="LOG Salesforce response"
-							doc:id="5647e369-d5c8-47d3-8648-3c6449046dda" message="#[output application/json
----
-payload]" />
+						<salesforce:upsert externalIdFieldName="Id"
+							doc:name="Upsert Account in Salesforce B"
+							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732"
+							config-ref="Salesforce_Sfdc_B_config" objectType="Account" />
 					</batch:aggregator>
 				</batch:step>
-			
-</batch:process-records>
-			<batch:on-complete>
-				<os:store key="syncState" doc:name="Set sync state to fromB"
-					doc:id="f08de372-2fb9-4aef-80ca-f6da2241fc75" objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromB]]></os:value>
-				</os:store>
-			</batch:on-complete>
+			</batch:process-records>
 		</batch:job>
-		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4da0508d-721a-4f16-88c0-ef3069db4d51" >
-				<os:store doc:name="Set sync state to fromA" doc:id="45b390c3-e0f0-4f19-bb26-e2853a08655f" key="syncState" objectStore="SchedulerStatus">
-					<os:value ><![CDATA[fromA]]></os:value>
+		<error-handler>
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="4da0508d-721a-4f16-88c0-ef3069db4d51">
+				<os:store doc:name="Set sync state to fromA"
+					doc:id="45b390c3-e0f0-4f19-bb26-e2853a08655f" key="syncState"
+					objectStore="SchedulerStatus">
+					<os:value><![CDATA[fromA]]></os:value>
 				</os:store>
 			</on-error-continue>
 		</error-handler>
-	
-</flow>
+	</flow>
 
-<flow name="sf-from-salesforceB-to-salesforceA" doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
-		<batch:job jobName="userFromBtoA-Batch_Job" doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
+	<flow name="sf-from-salesforceB-to-salesforceA"
+		doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
+		<batch:job jobName="userFromBtoA-Batch_Job"
+			doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
 			<batch:process-records>
-				<batch:step name="queryAccountFromAStep" doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
-					<salesforce:query doc:name="Query Single Account from Salesforce A" doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d"
-						target="IdDateInA" config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
+				<batch:step name="queryAccountFromAStep"
+					doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
+					<salesforce:query
+						doc:name="Query Single Account from Salesforce A"
+						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
+						config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -100,9 +106,11 @@ payload]" />
 	"email__c" : payload.email__c
 }]]]></salesforce:parameters>
 					</salesforce:query>
-					<ee:transform doc:name="Add SFDC Account Id to payload" doc:id="f66fd77d-13c7-4d13-a355-3e132873900e" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+					<ee:transform
+						doc:name="Add SFDC Account Id to payload"
+						doc:id="f66fd77d-13c7-4d13-a355-3e132873900e">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ---
 payload ++ {
@@ -111,10 +119,9 @@ payload ++ {
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-				
-
-</batch:step>
-				<batch:step name="upsertInSalesforceAStep" doc:id="8d0f79fc-9e95-4bea-8e85-0e74dc6c7a80"
+				</batch:step>
+				<batch:step name="upsertInSalesforceAStep"
+					doc:id="8d0f79fc-9e95-4bea-8e85-0e74dc6c7a80"
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateA &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
 						doc:id="5be842bf-b2d7-49cf-9796-13eb053fbd6c" size="${page.size}">
@@ -131,34 +138,135 @@ payload map ((item) -> {
 })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="LOG records to upsert" doc:id="bd422c3a-edd9-4b72-8fc9-f5478c8ebbbd" message="#[output application/json
----
-payload]"/>
-						<salesforce:upsert externalIdFieldName="Id" doc:name="Upsert Account in Salesforce A"
-							doc:id="c46631db-c257-4332-80b3-8103dbb7901b" config-ref="Salesforce_Sfdc_A_config" objectType="Account"/>
-						<logger level="INFO" doc:name="LOG Salesforce response"
-							doc:id="b3a9e028-ba2a-4af5-8d60-d354c9a079c1" message="#[output application/json
+						<logger level="INFO" doc:name="LOG records to upsert"
+							doc:id="bd422c3a-edd9-4b72-8fc9-f5478c8ebbbd"
+							message="#[output application/json
 ---
 payload]" />
+						<salesforce:upsert externalIdFieldName="Id"
+							doc:name="Upsert Account in Salesforce A"
+							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
+							config-ref="Salesforce_Sfdc_A_config" objectType="Account" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
-			<batch:on-complete>
-				<os:store key="syncState" doc:name="Set sync state to fromA"
-					doc:id="7a81a445-1f9c-4ee3-a4b9-c6089b12f9df" objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromA]]></os:value>
+		</batch:job>
+		<error-handler>
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="0e9b1e49-2e78-4fe1-a646-ac8021497488">
+				<os:store doc:name="Set sync state to fromB"
+					doc:id="2ca0da18-22be-423a-be03-ab18d3cf885f" key="syncState"
+					objectStore="SchedulerStatus">
+					<os:value><![CDATA[fromB]]></os:value>
 				</os:store>
-			</batch:on-complete>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+	<flow name="delete-account-salesofrce-org-B-to-org-A">
+		<batch:job jobName="AccountFromBtoA-Batch_Job"
+			doc:id="3eef6e35-6fc9-4e28-a5a6-35cd86754ec4">
+			<batch:process-records>
+				<batch:step name="queryAccountFromBStep"
+					doc:id="919b6731-ed5a-4af5-a6c7-bb91de6aeb12">
+					<salesforce:query
+						doc:name="Query Single Account from Salesforce A"
+						doc:id="989f14d9-5129-410c-8600-f754d1cbd932" target="IdDateInB"
+						config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
+						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
+						<salesforce:parameters><![CDATA[#[output applicaton/java
+---
+{
+	"email__c" : payload.email__c
+}]]]></salesforce:parameters>
+					</salesforce:query>
+					<ee:transform
+						doc:name="Add SFDC Account Id to payload"
+						doc:id="31525faf-d311-41bc-9047-5d651d3b28c8">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload ++ {
+	toDeleteFromA: payload.email__c == vars.IdDateInB.email__c,
+	accountId: vars.IdDateInB.Id
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</batch:step>
+				<batch:step name="Batch_Step"
+					doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df"
+					acceptExpression="#[payload.toDeleteFromA == true]">
+					<salesforce:delete
+						doc:name="Delete Account From Org A"
+						doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5"
+						config-ref="Salesforce_Sfdc_A_config">
+						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
+					</salesforce:delete>
+				</batch:step>
+			</batch:process-records>
 		</batch:job>
 		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0e9b1e49-2e78-4fe1-a646-ac8021497488" >
-				<os:store doc:name="Set sync state to fromB" doc:id="2ca0da18-22be-423a-be03-ab18d3cf885f" key="syncState" objectStore="SchedulerStatus">
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2f63dd68-8d4b-4d51-a0fa-cb9abbb4307a" >
+				<os:store doc:name="Set sync state to fromB" doc:id="1dc19524-3b93-41a5-988c-f5249566d592" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromB]]></os:value>
 				</os:store>
 			</on-error-continue>
 		</error-handler>
 	</flow>
 
+	<flow name="delete-account-salesofrce-org-A-to-org-B">
+		<batch:job jobName="AccountFromAtoB-Batch_Job"
+			doc:id="9237e77f-a77f-4594-9308-ac3cb72d60b1">
+			<batch:process-records>
+				<batch:step name="queryAccountFromBStep"
+					doc:id="9f56e09e-483e-4ecd-a274-6b4e9a4e4bd9">
+					<salesforce:query
+						doc:name="Query Single Account from Salesforce B"
+						doc:id="01ec6599-5df5-4ff2-b8b6-330a7cdca23c" target="IdDateInB"
+						config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
+						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
+						<salesforce:parameters><![CDATA[#[output applicaton/java
+---
+{
+	"email__c" : payload.email__c
+}]]]></salesforce:parameters>
+					</salesforce:query>
+					<ee:transform
+						doc:name="Add SFDC Account Id to payload"
+						doc:id="d43ac60d-8701-4d0d-820d-8b8ebafbb2b1">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload ++ {
+	toDeleteFromB: payload.email__c == vars.IdDateInB.email__c,
+	accountId: vars.IdDateInB.Id
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</batch:step>
+				<batch:step name="Batch_Step"
+					doc:id="91631639-de31-40fe-a118-1c401a6ef8e3"
+					acceptExpression="#[payload.toDeleteFromB == true]">
+					<salesforce:delete
+						doc:name="Delete Account From Org B"
+						doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e"
+						config-ref="Salesforce_Sfdc_B_config">
+						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
+					</salesforce:delete>
+				</batch:step>
+			</batch:process-records>
+		</batch:job>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1e10f31d-2dcf-41a9-9342-3124cbc42c36" >
+				<os:store doc:name="Copy_of_Set sync state to fromA" doc:id="5db174a0-5716-469e-99df-c0cde093f1d8" key="syncState" objectStore="SchedulerStatus" >
+					<os:value ><![CDATA[fromA]]></os:value>
+				</os:store>
+			</on-error-continue>
+		</error-handler>
+	</flow>
 
 </mule>
 
