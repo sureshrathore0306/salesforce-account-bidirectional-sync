@@ -138,11 +138,6 @@ payload map ((item) -> {
 })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="LOG records to upsert"
-							doc:id="bd422c3a-edd9-4b72-8fc9-f5478c8ebbbd"
-							message="#[output application/json
----
-payload]" />
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce A"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
