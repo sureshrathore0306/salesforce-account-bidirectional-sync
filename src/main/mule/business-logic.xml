@@ -45,9 +45,6 @@ payload ++ {
 	}]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Logger"
-						doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db"
-						message="#[output application/json --- payload]" />
 				</batch:step>
 				<batch:step name="upsertInSalesforceBStep"
 					doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
@@ -190,7 +187,7 @@ payload ++ {
 						</ee:message>
 					</ee:transform>
 				</batch:step>
-				<batch:step name="Batch_Step"
+				<!-- <batch:step name="Batch_Step"
 					doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df"
 					acceptExpression="#[payload.toDeleteFromA == true]">
 					<salesforce:delete
@@ -199,8 +196,12 @@ payload ++ {
 						config-ref="Salesforce_Sfdc_A_config">
 						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
 					</salesforce:delete>
-				</batch:step>
+				</batch:step> -->
 			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="ab2f0ac3-e9c3-4078-a5a2-772f367fc029" message="BABABABABABABABABABABABABABABABABABABABABABABABA"/>
+				<logger level="INFO" doc:name="Logger" doc:id="0230d2ad-860c-4a89-aa30-045c773b90d2" message="#[output application/json --- payload]"/>
+			</batch:on-complete>
 		</batch:job>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2f63dd68-8d4b-4d51-a0fa-cb9abbb4307a" >
@@ -242,7 +243,7 @@ payload ++ {
 						</ee:message>
 					</ee:transform>
 				</batch:step>
-				<batch:step name="Batch_Step"
+				<!-- <batch:step name="Batch_Step"
 					doc:id="91631639-de31-40fe-a118-1c401a6ef8e3"
 					acceptExpression="#[payload.toDeleteFromB == true]">
 					<salesforce:delete
@@ -251,8 +252,12 @@ payload ++ {
 						config-ref="Salesforce_Sfdc_B_config">
 						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
 					</salesforce:delete>
-				</batch:step>
+				</batch:step> -->
 			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="7777b7c4-6613-46e9-a835-51c298cfb405" message="ABABABABABABABABABABABABABABABABABABABABABABABABABABABAB"/>
+				<logger level="INFO" doc:name="Logger" doc:id="11e01c99-29cd-4e15-9fac-a3a05985bb47" message="#[output application/json --- payload]"/>
+			</batch:on-complete>
 		</batch:job>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1e10f31d-2dcf-41a9-9342-3124cbc42c36" >
