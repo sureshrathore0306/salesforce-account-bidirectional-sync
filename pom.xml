@@ -9,10 +9,14 @@
 		<version>2.1.15</version>
 	</parent>
 	<properties>
-		<app.runtime>4.3.0-20210119</app.runtime>
+		<app.runtime>4.3.0</app.runtime>
 		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
+		<cloudhub.application.name>salesforce-org-account-bidirectional-sync</cloudhub.application.name>
+		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
+		<environment>Sandbox</environment>
+		<worker.type>MICRO</worker.type>
 	</properties>
-	<artifactId>sfdc2sfdc</artifactId>
+	<artifactId>sfdc2sfdc-account-bidirectional-sync</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
 	<name>sfdc2sfdc-account-bidirectional-sync</name>
@@ -38,16 +42,29 @@
 	</dependencies>
 	<repositories>
 		<repository>
-			<id>anypoint-exchange</id>
+			<id>anypoint-exchange-v2</id>
 			<name>Anypoint Exchange</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v1/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
+			<layout>default</layout>
 		</repository>
 		<repository>
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
 			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mulesoft-releases</id>
+			<name>mulesoft release repository</name>
+			<layout>default</layout>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -56,7 +73,16 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>mule-application</classifier>
+					<cloudHubDeployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>${app.runtime}</muleVersion>
+						<username>${anypoint.userName}</username>
+						<password>${anypoint.password}</password>
+						<applicationName>${cloudhub.application.name}</applicationName>
+						<environment>${environment}</environment>
+						<workerType>${worker.type}</workerType>
+						<objectStoreV2>true</objectStoreV2>
+					</cloudHubDeployment>
 				</configuration>
 			</plugin>
 		</plugins>
