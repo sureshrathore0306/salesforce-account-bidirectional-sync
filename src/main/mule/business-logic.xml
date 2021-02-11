@@ -190,15 +190,14 @@ payload ++ {
 						</ee:message>
 					</ee:transform>
 				</batch:step>
-				<batch:step name="Batch_Step"
+				<batch:step name="Delete-Record-Batch-Step"
 					doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df"
 					acceptExpression="#[payload.toDeleteFromA == true]">
-					<salesforce:delete
-						doc:name="Delete Account From Org A"
-						doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5"
-						config-ref="Salesforce_Sfdc_A_config">
-						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="44af0559-4238-4444-ba3b-93ba3aad93d5" size="${page.size}">
+						<salesforce:delete doc:name="Delete Account From Org A" doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5" config-ref="Salesforce_Sfdc_A_config">
+						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
 					</salesforce:delete>
+					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
 		</batch:job>
@@ -242,21 +241,20 @@ payload ++ {
 						</ee:message>
 					</ee:transform>
 				</batch:step>
-				<batch:step name="Batch_Step"
+				<batch:step name="Delete-Record-Batch-Step"
 					doc:id="91631639-de31-40fe-a118-1c401a6ef8e3"
 					acceptExpression="#[payload.toDeleteFromB == true]">
-					<salesforce:delete
-						doc:name="Delete Account From Org B"
-						doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e"
-						config-ref="Salesforce_Sfdc_B_config">
-						<salesforce:ids><![CDATA[#[[payload.accountId]]]]></salesforce:ids>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="5d5caa0c-5481-4eb3-83fb-7cfa80f80584" size="${page.size}">
+						<salesforce:delete doc:name="Delete Account From Org B" doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e" config-ref="Salesforce_Sfdc_B_config">
+						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
 					</salesforce:delete>
+					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
 		</batch:job>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1e10f31d-2dcf-41a9-9342-3124cbc42c36" >
-				<os:store doc:name="Copy_of_Set sync state to fromA" doc:id="5db174a0-5716-469e-99df-c0cde093f1d8" key="syncState" objectStore="SchedulerStatus" >
+				<os:store doc:name="Set sync state to fromA" doc:id="5db174a0-5716-469e-99df-c0cde093f1d8" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromA]]></os:value>
 				</os:store>
 			</on-error-continue>
@@ -264,6 +262,3 @@ payload ++ {
 	</flow>
 
 </mule>
-
-	
-	
