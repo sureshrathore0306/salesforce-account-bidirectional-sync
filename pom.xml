@@ -3,11 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.mule.templates</groupId>
-		<artifactId>templates-tooling-parent-pom</artifactId>
-		<version>2.1.15</version>
-	</parent>
 	<properties>
 		<app.runtime>4.3.0</app.runtime>
 		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
@@ -16,6 +11,7 @@
 		<environment>Sandbox</environment>
 		<worker.type>MICRO</worker.type>
 	</properties>
+	<groupId>com.apisero</groupId>
 	<artifactId>sfdc2sfdc-account-bidirectional-sync</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
