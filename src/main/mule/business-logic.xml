@@ -24,7 +24,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					<salesforce:query
 						doc:name="Query Single Account from Salesforce B"
 						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -70,7 +70,7 @@ payload map ((item) -> {
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce B"
 							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732"
-							config-ref="Salesforce_Sfdc_B_config" objectType="Account" />
+							config-ref="Salesforce_Sfdc_new_org_config" objectType="Account" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -98,7 +98,7 @@ payload map ((item) -> {
 					<salesforce:query
 						doc:name="Query Single Account from Salesforce A"
 						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
-						config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -141,7 +141,7 @@ payload map ((item) -> {
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce A"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
-							config-ref="Salesforce_Sfdc_A_config" objectType="Account" />
+							config-ref="Salesforce_Sfdc_fox_org_config" objectType="Account" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -168,7 +168,7 @@ payload map ((item) -> {
 					<salesforce:query
 						doc:name="Query Single Account from Salesforce A"
 						doc:id="989f14d9-5129-410c-8600-f754d1cbd932" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_A_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -194,7 +194,7 @@ payload ++ {
 					doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df"
 					acceptExpression="#[payload.toDeleteFromA == true]">
 					<batch:aggregator doc:name="Batch Aggregator" doc:id="44af0559-4238-4444-ba3b-93ba3aad93d5" size="${page.size}">
-						<salesforce:delete doc:name="Delete Account From Org A" doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5" config-ref="Salesforce_Sfdc_A_config">
+						<salesforce:delete doc:name="Delete Account From Org A" doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5" config-ref="Salesforce_Sfdc_fox_org_config">
 						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
 					</salesforce:delete>
 					</batch:aggregator>
@@ -219,7 +219,7 @@ payload ++ {
 					<salesforce:query
 						doc:name="Query Single Account from Salesforce B"
 						doc:id="01ec6599-5df5-4ff2-b8b6-330a7cdca23c" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_B_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -245,7 +245,7 @@ payload ++ {
 					doc:id="91631639-de31-40fe-a118-1c401a6ef8e3"
 					acceptExpression="#[payload.toDeleteFromB == true]">
 					<batch:aggregator doc:name="Batch Aggregator" doc:id="5d5caa0c-5481-4eb3-83fb-7cfa80f80584" size="${page.size}">
-						<salesforce:delete doc:name="Delete Account From Org B" doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e" config-ref="Salesforce_Sfdc_B_config">
+						<salesforce:delete doc:name="Delete Account From Org B" doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e" config-ref="Salesforce_Sfdc_new_org_config">
 						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
 					</salesforce:delete>
 					</batch:aggregator>

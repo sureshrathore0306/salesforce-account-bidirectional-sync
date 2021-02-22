@@ -73,9 +73,9 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			target="lastQueryDateA" doc:name="Retrieve lastQueryDateA">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance A" config-ref="Salesforce_Sfdc_A_config">
+		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance A" config-ref="Salesforce_Sfdc_fox_org_config">
 			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.a.userId}']]></salesforce:salesforce-query>
+AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -99,9 +99,9 @@ AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.a
 			target="lastQueryDateB" doc:name="Retrieve lastQueryDateB">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance B" config-ref="Salesforce_Sfdc_B_config">
+		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance B" config-ref="Salesforce_Sfdc_new_org_config">
 			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.b.userId}']]></salesforce:salesforce-query>
+AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -125,8 +125,8 @@ AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.b
 		<os:retrieve doc:name="Retrieve lastQueryDateB" doc:id="71d1c57a-a24b-427c-a41e-b3eac12b7823" key="deleteWatermark" objectStore="watermarkStoreB" target="lastQueryDateB">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query-all doc:name="Query Deleted Account From org B" doc:id="89406bf5-2827-4a52-849c-73b79c99206b" config-ref="Salesforce_Sfdc_B_config" >
-			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.b.userId}']]></salesforce:salesforce-query>
+		<salesforce:query-all doc:name="Query Deleted Account From org B" doc:id="89406bf5-2827-4a52-849c-73b79c99206b" config-ref="Salesforce_Sfdc_new_org_config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -141,8 +141,8 @@ AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.b
 		<os:retrieve doc:name="Retrieve lastQueryDateA" doc:id="66486d60-b937-4048-86fe-9a3aa6130dda" key="deleteWatermark" objectStore="watermarkStoreA" target="lastQueryDateA">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query-all doc:name="Query Deleted Account From org A" doc:id="1d7c3a34-14c8-49d8-94d5-ee623b66d83c" config-ref="Salesforce_Sfdc_A_config" >
-			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.a.userId}']]></salesforce:salesforce-query>
+		<salesforce:query-all doc:name="Query Deleted Account From org A" doc:id="1d7c3a34-14c8-49d8-94d5-ee623b66d83c" config-ref="Salesforce_Sfdc_fox_org_config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
