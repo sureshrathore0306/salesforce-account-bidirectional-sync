@@ -26,7 +26,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		</salesforce:config-with-oauth-connection>
 	</salesforce:sfdc-config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey" >
-		<secure-properties:encrypt algorithm="Blowfish" useRandomIVs="true" />
+		<secure-properties:encrypt algorithm="Blowfish"/>
 	</secure-properties:config>
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0c03f8bb-f24c-46ec-8bff-2efa638a76b2" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
