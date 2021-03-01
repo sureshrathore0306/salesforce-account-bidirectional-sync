@@ -74,8 +74,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance A" config-ref="Salesforce_Sfdc_fox_org_config">
-			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT Name, LastModifiedDate, RecordTypeId, OwnerId FROM Contact WHERE LastModifiedDate > :lastModifiedDate
+]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -100,8 +100,9 @@ AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance B" config-ref="Salesforce_Sfdc_new_org_config">
-			<salesforce:salesforce-query><![CDATA[SELECT email__c, LastModifiedDate, Name, Phone FROM Account WHERE  email__c != null 
-AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT Name, LastModifiedDate, RecordTypeId, OwnerId FROM Account where LastModifiedDate > :lastModifiedDate
+
+]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {

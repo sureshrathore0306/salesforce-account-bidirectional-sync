@@ -25,11 +25,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 						doc:name="Query Single Account from Salesforce B"
 						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
 						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE Name= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"email__c" : payload.email__c
+	"Name" : payload.Name
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform
@@ -61,7 +61,6 @@ payload ++ {
 output application/java
 ---
 payload map ((item) -> {
-	email__c: item.email__c,
 	Name: item.Name,
 	(Id: item.Id) if (item.Id != null)
 })]]></ee:set-payload>
@@ -99,11 +98,11 @@ payload map ((item) -> {
 						doc:name="Query Single Account from Salesforce A"
 						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
 						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Contact WHERE Name= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"email__c" : payload.email__c
+	"Name" : payload.Name
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform
@@ -132,7 +131,6 @@ payload ++ {
 output application/java
 ---
 payload map ((item) -> {
-	email__c: item.email__c,
 	Name: item.Name,
 	(Id: item.Id) if (item.Id != null)	
 })]]></ee:set-payload>
@@ -141,7 +139,7 @@ payload map ((item) -> {
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce A"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
-							config-ref="Salesforce_Sfdc_fox_org_config" objectType="Account" />
+							config-ref="Salesforce_Sfdc_fox_org_config" objectType="Contact" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -169,11 +167,11 @@ payload map ((item) -> {
 						doc:name="Query Single Account from Salesforce A"
 						doc:id="989f14d9-5129-410c-8600-f754d1cbd932" target="IdDateInB"
 						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE Name= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"email__c" : payload.email__c
+	"Name" : payload.Name
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform

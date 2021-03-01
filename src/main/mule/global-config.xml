@@ -14,18 +14,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     <os:object-store name="watermarkStoreA" doc:name="Object store" />
     <os:object-store name="watermarkStoreB" doc:name="Object store" />
 	<salesforce:sfdc-config name="Salesforce_Sfdc_new_org_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
-		<salesforce:config-with-oauth-connection >
-			<salesforce:oauth-authorization-code consumerKey="${salesforce.new.key}" consumerSecret="${salesforce.new.secret}" authorizationUrl="${authorization.url}" accessTokenUrl="${accesss.token.url}" />
-			<salesforce:oauth-callback-config listenerConfig="HTTP_Listener_config" callbackPath="/callback" authorizePath="/new-org-authorize" externalCallbackUrl="http://localhost:8081/callback" />
-		</salesforce:config-with-oauth-connection>
+		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.new.key}" consumerSecret="${secure::salesforce.new.secret}" username="${secure::salesforce.new.username}" password="${secure::salesforce.new.password}" tokenEndpoint="${accesss.token.url}" securityToken="${secure::salesforce.new.securityToken}"/>
 	</salesforce:sfdc-config>
 	<salesforce:sfdc-config name="Salesforce_Sfdc_fox_org_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
-		<salesforce:config-with-oauth-connection >
-			<salesforce:oauth-authorization-code consumerKey="${salesforce.fox.key}" consumerSecret="${salesforce.fox.secret}" authorizationUrl="${authorization.url}" accessTokenUrl="${accesss.token.url}"/>
-			<salesforce:oauth-callback-config listenerConfig="HTTP_Listener_config" callbackPath="/fox-call-back" authorizePath="/fox-org-authorize" externalCallbackUrl="http://localhost:8081/fox-call-back"/>
-		</salesforce:config-with-oauth-connection>
+		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.fox.key}" username="${salesforce.fox.username}" password="${secure::salesforce.fox.password}" tokenEndpoint="${accesss.token.url}" consumerSecret="${secure::salesforce.fox.secret}"/>
 	</salesforce:sfdc-config>
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey" >
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey">
 		<secure-properties:encrypt algorithm="Blowfish"/>
 	</secure-properties:config>
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0c03f8bb-f24c-46ec-8bff-2efa638a76b2" >
