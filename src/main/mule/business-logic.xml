@@ -14,15 +14,15 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 
-	<flow name="sf-from-salesforceA-to-salesforceB"
+	<flow name="sf-from-fox-to-new"
 		doc:id="dda2293a-f3aa-41b9-aa97-bfe9ccbda6c5">
-		<batch:job jobName="userFromAtoB-Batch_Job"
+		<batch:job jobName="user-from-fox-to-new-Batch_Job"
 			doc:id="e9265e23-8dde-4855-8b03-b8ee709a4896">
 			<batch:process-records>
-				<batch:step name="queryAccountFromBStep"
+				<batch:step name="query-account-from-new-step"
 					doc:id="73f5cdc7-59ae-46cb-b1b4-1b3a965e2f3e">
 					<salesforce:query
-						doc:name="Query Single Account from Salesforce B"
+						doc:name="Query Single Account from New"
 						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
 						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE Name= ':Name']]></salesforce:salesforce-query>
@@ -49,7 +49,7 @@ payload ++ {
 						doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db"
 						message="#[output application/json --- payload]" />
 				</batch:step>
-				<batch:step name="upsertInSalesforceBStep"
+				<batch:step name="upsertIn-salesforce-new-step"
 					doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateB &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
@@ -57,19 +57,15 @@ payload ++ {
 						<ee:transform doc:name="Prepare Account for Upsert"
 							doc:id="5263e05a-1baf-4e7d-befd-a210be595768">
 							<ee:message>
-								<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-payload map ((item) -> {
-	Name: item.Name,
-	(Id: item.Id) if (item.Id != null)
-})]]></ee:set-payload>
+								<ee:set-payload resource="dwl/foxToNew.dwl" />
 							</ee:message>
 						</ee:transform>
+						<logger level="INFO" doc:name="Logger" doc:id="1c952be1-4a67-4523-98dc-9f072c027f76" message="#[payload]"/>
 						<salesforce:upsert externalIdFieldName="Id"
-							doc:name="Upsert Account in Salesforce B"
+							doc:name="Upsert Account in Salesforce New"
 							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732"
 							config-ref="Salesforce_Sfdc_new_org_config" objectType="Account" />
+						<logger level="INFO" doc:name="Logger" doc:id="8ad729e4-d65a-4c39-be69-eb2be124964b" message="#[output application/json&#10;---&#10;payload]"/>
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -87,15 +83,15 @@ payload map ((item) -> {
 		</error-handler>
 	</flow>
 
-	<flow name="sf-from-salesforceB-to-salesforceA"
+	<flow name="sf-from-new-to-fox"
 		doc:id="97fa8c20-2841-42a4-9d8d-7de44dfe12c5">
-		<batch:job jobName="userFromBtoA-Batch_Job"
+		<batch:job jobName="user-from-new-to-fox-Batch_Job"
 			doc:id="c8315ca1-2e5b-427d-a660-50c04a808463">
 			<batch:process-records>
-				<batch:step name="queryAccountFromAStep"
+				<batch:step name="query-account-from-fox-step"
 					doc:id="a2621ecf-e6bf-4108-ab25-ba681a269732">
 					<salesforce:query
-						doc:name="Query Single Account from Salesforce A"
+						doc:name="Query Single Account from Fox"
 						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
 						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Contact WHERE Name= ':Name']]></salesforce:salesforce-query>
@@ -118,8 +114,9 @@ payload ++ {
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="24be7020-7874-4c17-9e05-46a4e17de8cb" message="#[output application/json --- payload]"/>
 				</batch:step>
-				<batch:step name="upsertInSalesforceAStep"
+				<batch:step name="upsertIn-salesforce-fox-step"
 					doc:id="8d0f79fc-9e95-4bea-8e85-0e74dc6c7a80"
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateA &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
@@ -127,19 +124,15 @@ payload ++ {
 						<ee:transform doc:name="Prepare Account  for Upsert"
 							doc:id="5edef759-31d6-49af-a462-c9b94df858df">
 							<ee:message>
-								<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-payload map ((item) -> {
-	Name: item.Name,
-	(Id: item.Id) if (item.Id != null)	
-})]]></ee:set-payload>
+								<ee:set-payload resource="dwl/newToFox.dwl" />
 							</ee:message>
 						</ee:transform>
+						<logger level="INFO" doc:name="Logger" doc:id="758c8004-22e4-405e-9192-a93e402bdac2" message="#[payload]"/>
 						<salesforce:upsert externalIdFieldName="Id"
-							doc:name="Upsert Account in Salesforce A"
+							doc:name="Upsert Account in Salesforce fox"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
 							config-ref="Salesforce_Sfdc_fox_org_config" objectType="Contact" />
+						<logger level="INFO" doc:name="Logger" doc:id="3ad59da9-8d84-4b35-a223-255483cb67f0" message="#[output application/json&#10;---&#10;payload]"/>
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>

@@ -25,32 +25,32 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<choice doc:name="SyncState?" doc:id="b4703d83-780b-4e2d-bf5d-51b1566d66e2">
 			<when
 				expression="#[vars.syncState == 'fromA']">
-				<logger level="INFO" doc:name="LOG running from A"
-					doc:id="d3619f57-3984-49cf-b45c-a9b36047d05d" message="running from A" />
+				<logger level="INFO" doc:name="LOG running from fox"
+					doc:id="d3619f57-3984-49cf-b45c-a9b36047d05d" message="running from Fox" />
 				<os:store key="syncState" doc:name="Set sync state to running"
 					doc:id="604c37b2-002b-4768-9407-466ac5183c60" objectStore="SchedulerStatus">
 					<os:value><![CDATA[running]]></os:value>
 				</os:store>
-				<flow-ref doc:name="sf-sfdc-query-flowA" doc:id="79292a4f-778d-403a-8f8c-df766d5d42e6" name="sf-sfdc-query-flowA" />
-				<flow-ref doc:name="sf-from-salesforceA-to-salesforceB" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f" name="sf-from-salesforceA-to-salesforceB" />
-				<flow-ref doc:name="sf-sfdc-query-to-delete-record-org-A" doc:id="25f76102-73f6-487f-b2f3-c0a756e7fa9e" name="sf-sfdc-query-to-delete-record-org-A" />
+				<flow-ref doc:name="sf-sfdc-query-flow-fox" doc:id="79292a4f-778d-403a-8f8c-df766d5d42e6" name="sf-sfdc-query-flow-fox" />
+				<flow-ref doc:name="sf-from-fox-to-new" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f" name="sf-from-fox-to-new" />
+				<flow-ref doc:name="sf-sfdc-query-to-delete-record-fox" doc:id="25f76102-73f6-487f-b2f3-c0a756e7fa9e" name="sf-sfdc-query-to-delete-record-fox" />
 				<flow-ref doc:name="delete-account-salesofrce-org-A-to-org-B" doc:id="24b65d89-5a2d-44ef-b125-40c9ed69693e" name="delete-account-salesofrce-org-A-to-org-B" />
-				<os:store doc:name="Set sync state to fromB" doc:id="d2514c12-1e27-4f61-a4b8-ae438eb84545" key="syncState" objectStore="SchedulerStatus" >
+				<os:store doc:name="set-sync-state-to-from-new" doc:id="d2514c12-1e27-4f61-a4b8-ae438eb84545" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromB]]></os:value>
 				</os:store>
 			</when>
 			<when expression="#[vars.syncState == 'fromB']">
-				<logger level="INFO" doc:name="LOG running from B"
-					doc:id="d8b84a80-a7ae-4f3e-aafe-1ac5a4f71e7c" message="running from B" />
+				<logger level="INFO" doc:name="LOG running from New"
+					doc:id="d8b84a80-a7ae-4f3e-aafe-1ac5a4f71e7c" message="running from New" />
 				<os:store key="syncState" doc:name="Set sync state to running"
 					doc:id="2ed014a1-a76d-48d0-8a6b-32d753b96500" objectStore="SchedulerStatus">
 					<os:value><![CDATA[running]]></os:value>
 				</os:store>
-				<flow-ref doc:name="sf-sfdc-query-flowB" doc:id="c2ebe0d5-29f0-4c85-8ac5-9a2ef9948950" name="sf-sfdc-query-flowB" />
-				<flow-ref doc:name="sf-from-salesforceB-to-salesforceA" doc:id="f2f219ed-b182-4c59-be37-24188b2cf9c6" name="sf-from-salesforceB-to-salesforceA" />
-				<flow-ref doc:name="sf-sfdc-query-to-delete-record-org-B" doc:id="ccc0ae3f-929a-464b-905b-bd4485049e13" name="sf-sfdc-query-to-delete-record-org-B" />
+				<flow-ref doc:name="sf-sfdc-query-flow-new" doc:id="c2ebe0d5-29f0-4c85-8ac5-9a2ef9948950" name="sf-sfdc-query-flow-new" />
+				<flow-ref doc:name="sf-from-new-to-fox" doc:id="f2f219ed-b182-4c59-be37-24188b2cf9c6" name="sf-from-new-to-fox" />
+				<flow-ref doc:name="sf-sfdc-query-to-delete-record-new-org" doc:id="ccc0ae3f-929a-464b-905b-bd4485049e13" name="sf-sfdc-query-to-delete-record-new-org" />
 				<flow-ref doc:name="delete-account-salesofrce-org-B-to-org-A" doc:id="dcb44eaa-5d3a-4832-b5bb-117fcadfea5a" name="delete-account-salesofrce-org-B-to-org-A" />
-				<os:store doc:name="Set sync state to fromA" doc:id="24048aea-fe6b-49b9-b7d7-580c81fa6c26" key="syncState" objectStore="SchedulerStatus" >
+				<os:store doc:name="set-sync-state-to-from-fox" doc:id="24048aea-fe6b-49b9-b7d7-580c81fa6c26" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromA]]></os:value>
 				</os:store>
 			</when>
@@ -68,24 +68,28 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="sf-sfdc-query-flowA">
+	<flow name="sf-sfdc-query-flow-fox">
 		<os:retrieve key="watermark" objectStore="watermarkStoreA"
 			target="lastQueryDateA" doc:name="Retrieve lastQueryDateA">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance A" config-ref="Salesforce_Sfdc_fox_org_config">
-			<salesforce:salesforce-query><![CDATA[SELECT Name, LastModifiedDate, RecordTypeId, OwnerId FROM Contact WHERE LastModifiedDate > :lastModifiedDate
-]]></salesforce:salesforce-query>
+		<salesforce:query doc:name="Query Contact with filtering criteria from Salesforce Fox Org" config-ref="Salesforce_Sfdc_fox_org_config">
+			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, Name, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
+Last_date_of_contact__c, Credentialing_Status__c, Primary_Specialty__c, NPI_Number__c, Degree__c, Has_Adverse_History__c, LastModifiedDate,
+Preferences_History__c from Contact WHERE 
+LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
 	"lastModifiedDate" : vars.lastQueryDateA
 }]]]></salesforce:parameters>
 		</salesforce:query>
+		<logger level="INFO" doc:name="Logger" doc:id="16f60841-9411-4600-875a-53beb1ad1c53" message="#[payload]"/>
 		<os:store key="watermark" failOnNullValue="false"
 			objectStore="watermarkStoreA" doc:name="Store lastQueryDateA">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateA]]]></os:value>
 		</os:store>
+		<logger level="INFO" doc:name="Logger" doc:id="f86ae0fc-f7e5-456c-b4e8-8239fe064738" message="#[payload]"/>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b3eff7a8-fd88-4b2e-9c60-702403b9a5e8" >
 				<os:store doc:name="Set sync state to fromA" doc:id="f3b320bb-2e86-457a-82ee-120c22489fce" key="syncState" objectStore="SchedulerStatus">
@@ -94,21 +98,23 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</on-error-continue>
 		</error-handler>
 	</flow>
-	<flow name="sf-sfdc-query-flowB">
+	<flow name="sf-sfdc-query-flow-new">
 		<os:retrieve key="watermark" objectStore="watermarkStoreB"
 			target="lastQueryDateB" doc:name="Retrieve lastQueryDateB">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query doc:name="Query User with filtering criteria from Salesforce Instance B" config-ref="Salesforce_Sfdc_new_org_config">
-			<salesforce:salesforce-query><![CDATA[SELECT Name, LastModifiedDate, RecordTypeId, OwnerId FROM Account where LastModifiedDate > :lastModifiedDate
-
-]]></salesforce:salesforce-query>
+		<salesforce:query doc:name="Query Account with filtering criteria from Salesforce New Org" config-ref="Salesforce_Sfdc_new_org_config">
+			<salesforce:salesforce-query><![CDATA[SELECT AccountNumber, OwnerId, RecordTypeId, Name, PersonAssistantName, PersonAssistantPhone, PersonBirthdate, 
+CreatedById, PersonDoNotCall, PersonEmail, PersonHasOptedOutOfEmail, PersonHomePhone, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
+PersonLastCUUpdateDate, PersonLeadSource, PersonMailingAddress, PersonMobilePhone, PersonOtherAddress, PersonOtherPhone, Division__c,
+lastname, firstname FROM Account WHERE LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
 	"lastModifiedDate" : vars.lastQueryDateB
 }]]]></salesforce:parameters>
 		</salesforce:query>
+		<logger level="INFO" doc:name="Logger" doc:id="6afbdd3e-a336-4723-806c-c837e709ccd0" message="#[payload]"/>
 		<os:store key="watermark" doc:name="Store lastQueryDateB"
 			doc:id="b995ea0e-c89f-40ac-9f6e-0e06096f5abc" objectStore="watermarkStoreB">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateB]]]></os:value>
@@ -122,12 +128,13 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		</error-handler>
 	
 </flow>
-	<flow name="sf-sfdc-query-to-delete-record-org-B" doc:id="0b77f800-a628-4c17-aaea-ac1531291470" >
+	<flow name="sf-sfdc-query-to-delete-record-new-org" doc:id="0b77f800-a628-4c17-aaea-ac1531291470" >
 		<os:retrieve doc:name="Retrieve lastQueryDateB" doc:id="71d1c57a-a24b-427c-a41e-b3eac12b7823" key="deleteWatermark" objectStore="watermarkStoreB" target="lastQueryDateB">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query-all doc:name="Query Deleted Account From org B" doc:id="89406bf5-2827-4a52-849c-73b79c99206b" config-ref="Salesforce_Sfdc_new_org_config" >
-			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
+		<salesforce:query-all doc:name="Query Deleted Account From New Org" doc:id="89406bf5-2827-4a52-849c-73b79c99206b" config-ref="Salesforce_Sfdc_new_org_config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, PersonEmail, LastModifiedDate FROM Account WHERE  isDeleted = true AND 
+PersonEmail != null AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -138,12 +145,13 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			<os:value ><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateB]]]></os:value>
 		</os:store>
 	</flow>
-	<flow name="sf-sfdc-query-to-delete-record-org-A" doc:id="a6f4e2c3-845e-4999-9ad4-6ea48fc9d686" >
+	<flow name="sf-sfdc-query-to-delete-record-fox" doc:id="a6f4e2c3-845e-4999-9ad4-6ea48fc9d686" >
 		<os:retrieve doc:name="Retrieve lastQueryDateA" doc:id="66486d60-b937-4048-86fe-9a3aa6130dda" key="deleteWatermark" objectStore="watermarkStoreA" target="lastQueryDateA">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
-		<salesforce:query-all doc:name="Query Deleted Account From org A" doc:id="1d7c3a34-14c8-49d8-94d5-ee623b66d83c" config-ref="Salesforce_Sfdc_fox_org_config" >
-			<salesforce:salesforce-query ><![CDATA[SELECT Id, email__c, LastModifiedDate FROM Account WHERE  isDeleted = true AND email__c != null AND LastModifiedDate > :lastModifiedDate]]></salesforce:salesforce-query>
+		<salesforce:query-all doc:name="Query Deleted Contact From Fox Org" doc:id="1d7c3a34-14c8-49d8-94d5-ee623b66d83c" config-ref="Salesforce_Sfdc_fox_org_config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, Email, LastModifiedDate FROM Contact WHERE  isDeleted = true AND Email != null 
+AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
