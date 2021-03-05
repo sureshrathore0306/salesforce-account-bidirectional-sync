@@ -9,5 +9,6 @@ payload map ((item) -> {
 	LastName: "_",
 	Division_Code__c: item.Division__c,
 	Email: item.PersonEmail,
+	RecordTypeId: p('contactProvider.recordTypeId'),
 	(Id: item.Id) if (item.Id != null)	
 })

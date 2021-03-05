@@ -8,5 +8,6 @@ payload map ((item) -> {
 	Name: item.Name,
 	Division__c: item.Division_Code__c,
 	PersonBirthdate: item.Birthdate,
+	RecordTypeId: p('personAccount.recordTypeId'),
 	(Id: item.Id) if (item.Id != null)
 })
