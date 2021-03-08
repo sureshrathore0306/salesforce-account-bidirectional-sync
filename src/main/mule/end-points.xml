@@ -74,10 +74,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query Contact with filtering criteria from Salesforce Fox Org" config-ref="Salesforce_Sfdc_fox_org_config">
-			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, Name, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
+			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, FirstName, LastName, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
 Last_date_of_contact__c, Credentialing_Status__c, Primary_Specialty__c, NPI_Number__c, Degree__c, Has_Adverse_History__c, LastModifiedDate,
 Preferences_History__c from Contact WHERE 
-LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' AND RecordTypeId='${contactProvider.recordTypeId}']]></salesforce:salesforce-query>
+LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -104,11 +104,11 @@ LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.u
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query doc:name="Query Account with filtering criteria from Salesforce New Org" config-ref="Salesforce_Sfdc_new_org_config">
-			<salesforce:salesforce-query><![CDATA[SELECT AccountNumber, OwnerId, RecordTypeId, Name, PersonAssistantName, PersonAssistantPhone, PersonBirthdate, 
-CreatedById, PersonDoNotCall, PersonEmail, PersonHasOptedOutOfEmail, PersonHomePhone, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
-PersonLastCUUpdateDate, PersonLeadSource, PersonMailingAddress, PersonMobilePhone, PersonOtherAddress, PersonOtherPhone, Division__c,
-lastname, firstname FROM Account WHERE LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
-AND RecordTypeId='${personAccount.recordTypeId}']]></salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT OwnerId, RecordTypeId, FirstName, LastName, 
+CreatedById, PersonEmail, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
+PersonLastCUUpdateDate, PersonMailingAddress, PersonMobilePhone, Division__c
+FROM Account WHERE LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
+]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {

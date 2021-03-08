@@ -25,11 +25,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 						doc:name="Query Single Account from New"
 						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
 						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE Name= ':Name']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE LastName= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"Name" : payload.Name
+	"Name" : payload.LastName
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform
@@ -94,11 +94,11 @@ payload ++ {
 						doc:name="Query Single Account from Fox"
 						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
 						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Contact WHERE Name= ':Name']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Contact WHERE LastName= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"Name" : payload.Name
+	"Name" : payload.LastName 
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform
@@ -160,11 +160,11 @@ payload ++ {
 						doc:name="Query Single Account from Salesforce A"
 						doc:id="989f14d9-5129-410c-8600-f754d1cbd932" target="IdDateInB"
 						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE Name= ':Name']]></salesforce:salesforce-query>
+						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE LastName= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
 {
-	"Name" : payload.Name
+	"Name" : payload.LastName
 }]]]></salesforce:parameters>
 					</salesforce:query>
 					<ee:transform

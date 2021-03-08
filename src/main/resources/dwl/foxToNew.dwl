@@ -2,12 +2,13 @@
 output application/java
 ---
 payload map ((item) -> {
-	PersonMobilePhone: item.MobilePhone,
-	Phone: item.Phone,
+	(Id: item.Id) if (item.Id != null),
+//	RecordTypeId: '012A0000000z7eRIAQ',
+	FirstName: item.FirstName,
+	LastName: item.LastName,
 	PersonEmail: item.Email,
-	Name: item.Name,
+	Phone: item.Phone,
+	PersonMobilePhone: item.MobilePhone,
 	Division__c: item.Division_Code__c,
-	PersonBirthdate: item.Birthdate,
-	RecordTypeId: p('personAccount.recordTypeId'),
-	(Id: item.Id) if (item.Id != null)
+	PersonBirthdate: item.Birthdate
 })
