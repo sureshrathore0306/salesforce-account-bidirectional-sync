@@ -1,9 +1,10 @@
 %dw 2.0
 output application/java
 ---
+//Fox to New
 payload map ((item) -> {
 	(Id: item.Id) if (item.Id != null),
-//	RecordTypeId: '012A0000000z7eRIAQ',
+	RecordTypeId: p('personAccount.recordTypeId'),
 	FirstName: item.FirstName,
 	LastName: item.LastName,
 	PersonEmail: item.Email,
