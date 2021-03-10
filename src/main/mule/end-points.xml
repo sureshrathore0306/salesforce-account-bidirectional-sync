@@ -17,6 +17,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					startDelay="${scheduler.startDelay}" timeUnit="SECONDS"/>
 			</scheduling-strategy>
 		</scheduler>
+		<flow-ref doc:name="Refer To cache-valuesFlow" doc:id="b735433c-9f7f-4599-b1b6-0b794b893666" name="cache-valuesFlow" target="vCacheData"/>
 		<os:retrieve key="syncState" doc:name="Retrieve sync state"
 			objectStore="SchedulerStatus" target="syncState">
 			<os:default-value><![CDATA[fromA]]></os:default-value>
@@ -67,6 +68,21 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					name="errorHandlingFlow" />
 			</on-error-propagate>
 		</error-handler>
+	</flow>
+	<flow name="cache-valuesFlow" doc:id="2934f5ed-879f-4339-9e94-d9f506bd3fdc" >
+		<ee:cache doc:name="Cache" doc:id="dd25bd26-e4a4-423c-a5e7-9a4a2cb51762" >
+			<salesforce:query doc:name="Query Devision From Fox" doc:id="f969b8e4-f8c4-485c-bd0b-44bea49d7505" config-ref="Salesforce_Sfdc_fox_org_config" target="vDivision">
+				<salesforce:salesforce-query ><![CDATA[SELECT Id,Name FROM Division__c]]></salesforce:salesforce-query>
+			</salesforce:query>
+			<salesforce:query doc:name="Contact Provider Record Type Id" doc:id="de387ad2-d113-4c32-95eb-1cd6a3321ba5" config-ref="Salesforce_Sfdc_fox_org_config" target="vContactProviderId">
+				<salesforce:salesforce-query ><![CDATA[SELECT Id FROM RecordType WHERE Name='Provider' AND SObjectType='Contact']]></salesforce:salesforce-query>
+			</salesforce:query>
+			<salesforce:query doc:name="Person Account Recotd Type Id" doc:id="968129ff-f2fd-4af7-addd-96b62bf75156" config-ref="Salesforce_Sfdc_new_org_config" target="vPersonAccountId">
+				<salesforce:salesforce-query ><![CDATA[SELECT Id FROM RecordType WHERE Name = 'Person Account' and SObjectType = 'Account']]></salesforce:salesforce-query>
+			</salesforce:query>
+			<set-payload value='#[output application/json&#10;---&#10;{&#10;"division": vars.vDivision,&#10;"recordType": {&#10;"contactProviderId":vras.vContactProviderId,&#10;"personAccountId":vars.vPersonAccountId&#10;}&#10;}]' doc:name="Set Payload" doc:id="2f438406-aacb-4f31-ae26-c98783067dc0" />
+			<logger level="INFO" doc:name="Logger" doc:id="f1ad3969-226c-4f91-965d-3e29e363f783" message="#[payload]"/>
+		</ee:cache>
 	</flow>
 	<flow name="sf-sfdc-query-flow-fox">
 		<os:retrieve key="watermark" objectStore="watermarkStoreA"
