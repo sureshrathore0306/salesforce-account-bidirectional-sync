@@ -1,30 +1,67 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core"
-    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:os="http://www.mulesoft.org/schema/mule/os"
-    xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <global-property doc:name="Global Property" name="mule.env" value="dev" />
+	<global-property doc:name="Global Property"
+		name="mule.env" value="dev" />
 
-    <configuration-properties file="mule.${mule.env}.properties" doc:id="27764bfa-1d6e-4112-8b4f-e5395cb008c1" doc:name="Configuration properties" />
-    <configuration-properties file="common.properties" doc:id="d5773404-5f1d-4b79-ba53-030db5f3d774" doc:name="Configuration properties" />
+	<configuration-properties
+		file="mule.${mule.env}.properties"
+		doc:id="27764bfa-1d6e-4112-8b4f-e5395cb008c1"
+		doc:name="Configuration properties" />
+	<configuration-properties
+		file="common.properties" doc:id="d5773404-5f1d-4b79-ba53-030db5f3d774"
+		doc:name="Configuration properties" />
 
-    <os:object-store name="SchedulerStatus" persistent="false" doc:id="e9862648-2cb3-47db-a763-9275db0a1854" doc:name="Object store" />
-    <os:object-store name="watermarkStoreA" doc:name="Object store" />
-    <os:object-store name="watermarkStoreB" doc:name="Object store" />
-	<salesforce:sfdc-config name="Salesforce_Sfdc_new_org_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
-		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.new.key}" consumerSecret="${secure::salesforce.new.secret}" username="${salesforce.new.username}" password="${salesforce.new.password}" tokenEndpoint="${accesss.token.url}" securityToken="${salesforce.new.securityToken}"/>
+	<os:object-store name="SchedulerStatus"
+		persistent="false" doc:id="e9862648-2cb3-47db-a763-9275db0a1854"
+		doc:name="Object store" />
+	<os:object-store name="watermarkStoreA"
+		doc:name="Object store" />
+	<os:object-store name="watermarkStoreB"
+		doc:name="Object store" />
+	<salesforce:sfdc-config
+		name="Salesforce_Sfdc_new_org_config" doc:name="Salesforce Config"
+		doc:id="6b75e779-6117-4e1a-8173-13378a926c1b">
+		<salesforce:oauth-user-pass-connection
+			consumerKey="${salesforce.new.key}"
+			consumerSecret="${secure::salesforce.new.secret}"
+			username="${salesforce.new.username}"
+			password="${salesforce.new.password}"
+			tokenEndpoint="${accesss.token.url}"
+			securityToken="${salesforce.new.securityToken}" />
 	</salesforce:sfdc-config>
-	<salesforce:sfdc-config name="Salesforce_Sfdc_fox_org_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
-		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.fox.key}" username="${salesforce.fox.username}" password="${salesforce.fox.password}" tokenEndpoint="${accesss.token.url}" consumerSecret="${secure::salesforce.fox.secret}"/>
+	<salesforce:sfdc-config
+		name="Salesforce_Sfdc_fox_org_config" doc:name="Salesforce Config"
+		doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496">
+		<salesforce:oauth-user-pass-connection
+			consumerKey="${salesforce.fox.key}"
+			username="${salesforce.fox.username}"
+			password="${salesforce.fox.password}"
+			tokenEndpoint="${accesss.token.url}"
+			consumerSecret="${secure::salesforce.fox.secret}" />
 	</salesforce:sfdc-config>
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="3057489b-3232-468b-8c7e-5596e81c4f75" file="mule.dev.properties" key="myKey">
-		<secure-properties:encrypt algorithm="Blowfish"/>
+	<secure-properties:config
+		name="Secure_Properties_Config" doc:name="Secure Properties Config"
+		doc:id="3057489b-3232-468b-8c7e-5596e81c4f75"
+		file="mule.dev.properties" key="myKey">
+		<secure-properties:encrypt
+			algorithm="Blowfish" />
 	</secure-properties:config>
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0c03f8bb-f24c-46ec-8bff-2efa638a76b2" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
+	<http:listener-config name="HTTP_Listener_config"
+		doc:name="HTTP Listener config"
+		doc:id="0c03f8bb-f24c-46ec-8bff-2efa638a76b2">
+		<http:listener-connection host="0.0.0.0"
+			port="8081" />
 	</http:listener-config>
-	
+
 
 </mule>
