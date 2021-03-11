@@ -11,6 +11,6 @@ payload map ((item) -> {
 	Phone: item.Phone,
 	MobilePhone: item.PersonMobilePhone,
 	Division_Code__c: item.Division__c,
-	Division__c: "a0R1k000003IewgEAC",
+	Division__c: (vars.vInitialized.division filter ((item, index) -> item.Name == item.Division__c)).Id[0],
 	Birthdate: item.PersonBirthdate,	
 })

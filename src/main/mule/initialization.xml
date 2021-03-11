@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="initialization-valuesFlow"
+		doc:id="46653c20-87ca-40ff-9efd-e98afca36a2b">
+		<ee:cache doc:name="Cache"
+			doc:id="19b1d310-0666-44fa-ab62-44831917bb3e">
+			<salesforce:query doc:name="Query Devision From Fox"
+				doc:id="e6b96906-bcb7-4e4e-b197-21a1d333a4c9"
+				config-ref="Salesforce_Sfdc_fox_org_config" target="vDivision">
+				<salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Division__c]]></salesforce:salesforce-query>
+			</salesforce:query>
+			<salesforce:query
+				doc:name="Contact Provider Record Type Id"
+				doc:id="705a5f67-0591-4b5f-9c38-de5d37f0658d"
+				config-ref="Salesforce_Sfdc_fox_org_config"
+				target="vContactProviderId">
+				<salesforce:salesforce-query><![CDATA[SELECT Id FROM RecordType WHERE Name='Provider' AND SObjectType='Contact']]></salesforce:salesforce-query>
+			</salesforce:query>
+			<salesforce:query
+				doc:name="Person Account Recotd Type Id"
+				doc:id="09b0269a-0536-468a-90e5-7ef7a9ac5801"
+				config-ref="Salesforce_Sfdc_new_org_config"
+				target="vPersonAccountId">
+				<salesforce:salesforce-query><![CDATA[SELECT Id FROM RecordType WHERE Name = 'Person Account' and SObjectType = 'Account']]></salesforce:salesforce-query>
+			</salesforce:query>
+			<set-payload
+				value='#[output application/json&#10;---&#10;{&#10;"division": vars.vDivision,&#10;"recordType": {&#10;"providerId":vars.vContactProviderId.Id[0],&#10;"personId":vars.vPersonAccountId.Id[0]&#10;}&#10;}]'
+				doc:name="Set Final Payload" doc:id="013f1190-bee3-4dee-842d-85bb11f4d5c9" />
+		</ee:cache>
+	</flow>
+
+</mule>

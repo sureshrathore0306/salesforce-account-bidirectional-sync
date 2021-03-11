@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					startDelay="${scheduler.startDelay}" timeUnit="SECONDS"/>
 			</scheduling-strategy>
 		</scheduler>
-		<flow-ref doc:name="Refer To cache-valuesFlow" doc:id="b735433c-9f7f-4599-b1b6-0b794b893666" name="cache-valuesFlow" target="vCacheData"/>
+		<flow-ref doc:name="Refer To initialization-valuesFlow" doc:id="b735433c-9f7f-4599-b1b6-0b794b893666" name="initialization-valuesFlow" target="vInitialized"/>
 		<os:retrieve key="syncState" doc:name="Retrieve sync state"
 			objectStore="SchedulerStatus" target="syncState">
 			<os:default-value><![CDATA[fromA]]></os:default-value>
@@ -34,8 +34,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				</os:store>
 				<flow-ref doc:name="sf-sfdc-query-flow-fox" doc:id="79292a4f-778d-403a-8f8c-df766d5d42e6" name="sf-sfdc-query-flow-fox" />
 				<flow-ref doc:name="sf-from-fox-to-new" doc:id="6d87be17-152d-44c9-90ff-a80b0008d93f" name="sf-from-fox-to-new" />
-				<flow-ref doc:name="sf-sfdc-query-to-delete-record-fox" doc:id="25f76102-73f6-487f-b2f3-c0a756e7fa9e" name="sf-sfdc-query-to-delete-record-fox" />
-				<flow-ref doc:name="delete-account-salesofrce-org-A-to-org-B" doc:id="24b65d89-5a2d-44ef-b125-40c9ed69693e" name="delete-account-salesofrce-org-A-to-org-B" />
+	<!-- <flow-ref doc:name="sf-sfdc-query-to-delete-record-fox" doc:id="25f76102-73f6-487f-b2f3-c0a756e7fa9e" 
+		name="sf-sfdc-query-to-delete-record-fox" /> <flow-ref doc:name="delete-account-salesofrce-org-A-to-org-B" 
+		doc:id="24b65d89-5a2d-44ef-b125-40c9ed69693e" name="delete-account-salesofrce-org-A-to-org-B" 
+		/> -->
 				<os:store doc:name="set-sync-state-to-from-new" doc:id="d2514c12-1e27-4f61-a4b8-ae438eb84545" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromB]]></os:value>
 				</os:store>
@@ -49,8 +51,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				</os:store>
 				<flow-ref doc:name="sf-sfdc-query-flow-new" doc:id="c2ebe0d5-29f0-4c85-8ac5-9a2ef9948950" name="sf-sfdc-query-flow-new" />
 				<flow-ref doc:name="sf-from-new-to-fox" doc:id="f2f219ed-b182-4c59-be37-24188b2cf9c6" name="sf-from-new-to-fox" />
-				<flow-ref doc:name="sf-sfdc-query-to-delete-record-new-org" doc:id="ccc0ae3f-929a-464b-905b-bd4485049e13" name="sf-sfdc-query-to-delete-record-new-org" />
-				<flow-ref doc:name="delete-account-salesofrce-org-B-to-org-A" doc:id="dcb44eaa-5d3a-4832-b5bb-117fcadfea5a" name="delete-account-salesofrce-org-B-to-org-A" />
+<!-- 				<flow-ref doc:name="sf-sfdc-query-to-delete-record-new-org" doc:id="ccc0ae3f-929a-464b-905b-bd4485049e13" name="sf-sfdc-query-to-delete-record-new-org" />
+				<flow-ref doc:name="delete-account-salesofrce-org-B-to-org-A" doc:id="dcb44eaa-5d3a-4832-b5bb-117fcadfea5a" name="delete-account-salesofrce-org-B-to-org-A" /> -->
 				<os:store doc:name="set-sync-state-to-from-fox" doc:id="24048aea-fe6b-49b9-b7d7-580c81fa6c26" key="syncState" objectStore="SchedulerStatus" >
 					<os:value ><![CDATA[fromA]]></os:value>
 				</os:store>
@@ -69,21 +71,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="cache-valuesFlow" doc:id="2934f5ed-879f-4339-9e94-d9f506bd3fdc" >
-		<ee:cache doc:name="Cache" doc:id="dd25bd26-e4a4-423c-a5e7-9a4a2cb51762" >
-			<salesforce:query doc:name="Query Devision From Fox" doc:id="f969b8e4-f8c4-485c-bd0b-44bea49d7505" config-ref="Salesforce_Sfdc_fox_org_config" target="vDivision">
-				<salesforce:salesforce-query ><![CDATA[SELECT Id,Name FROM Division__c]]></salesforce:salesforce-query>
-			</salesforce:query>
-			<salesforce:query doc:name="Contact Provider Record Type Id" doc:id="de387ad2-d113-4c32-95eb-1cd6a3321ba5" config-ref="Salesforce_Sfdc_fox_org_config" target="vContactProviderId">
-				<salesforce:salesforce-query ><![CDATA[SELECT Id FROM RecordType WHERE Name='Provider' AND SObjectType='Contact']]></salesforce:salesforce-query>
-			</salesforce:query>
-			<salesforce:query doc:name="Person Account Recotd Type Id" doc:id="968129ff-f2fd-4af7-addd-96b62bf75156" config-ref="Salesforce_Sfdc_new_org_config" target="vPersonAccountId">
-				<salesforce:salesforce-query ><![CDATA[SELECT Id FROM RecordType WHERE Name = 'Person Account' and SObjectType = 'Account']]></salesforce:salesforce-query>
-			</salesforce:query>
-			<set-payload value='#[output application/json&#10;---&#10;{&#10;"division": vars.vDivision,&#10;"recordType": {&#10;"contactProviderId":vras.vContactProviderId,&#10;"personAccountId":vars.vPersonAccountId&#10;}&#10;}]' doc:name="Set Payload" doc:id="2f438406-aacb-4f31-ae26-c98783067dc0" />
-			<logger level="INFO" doc:name="Logger" doc:id="f1ad3969-226c-4f91-965d-3e29e363f783" message="#[payload]"/>
-		</ee:cache>
-	</flow>
+	
 	<flow name="sf-sfdc-query-flow-fox">
 		<os:retrieve key="watermark" objectStore="watermarkStoreA"
 			target="lastQueryDateA" doc:name="Retrieve lastQueryDateA">
@@ -92,11 +80,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<salesforce:query doc:name="Query Contact with filtering criteria from Salesforce Fox Org" config-ref="Salesforce_Sfdc_fox_org_config">
 			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, FirstName, LastName, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
 Last_date_of_contact__c, Credentialing_Status__c, Primary_Specialty__c, NPI_Number__c, Degree__c, Has_Adverse_History__c, LastModifiedDate,
-Preferences_History__c from Contact WHERE RecordTypeId IN (SELECT Id FROM RecordType WHERE Name='Provider' AND SObjectType='Contact') 
-AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
+Preferences_History__c from Contact WHERE RecordTypeId = :recordTypeId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
+	"recordTypeId" : vars.vInitialized.recordType.providerId,
 	"lastModifiedDate" : vars.lastQueryDateA
 }]]]></salesforce:parameters>
 		</salesforce:query>
@@ -123,12 +111,12 @@ AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.f
 			<salesforce:salesforce-query><![CDATA[SELECT OwnerId, RecordTypeId, FirstName, LastName, 
 CreatedById, PersonEmail, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
 PersonLastCUUpdateDate, PersonMailingAddress, PersonMobilePhone, Division__c
-FROM Account WHERE RecordTypeId IN (SELECT Id FROM RecordType WHERE Name = 'Person Account' and SObjectType = 'Account') 
-AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
+FROM Account WHERE RecordTypeId = :recordTypeId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
 ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
+	"recordTypeId" : vars.vInitialized.recordType.personId,
 	"lastModifiedDate" : vars.lastQueryDateB
 }]]]></salesforce:parameters>
 		</salesforce:query>
