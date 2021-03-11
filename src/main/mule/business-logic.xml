@@ -45,9 +45,6 @@ payload ++ {
 	}]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Logger"
-						doc:id="03672ce0-1cad-4000-bec9-37f431f0c0db"
-						message="#[output application/json --- payload]" />
 				</batch:step>
 				<batch:step name="upsertIn-salesforce-new-step"
 					doc:id="ef1fa6ea-9b07-4385-a0b2-491396f97a34"
@@ -60,7 +57,6 @@ payload ++ {
 								<ee:set-payload resource="dwl/foxToNew.dwl" />
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="Logger" doc:id="1c952be1-4a67-4523-98dc-9f072c027f76" message="#[payload]"/>
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce New"
 							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732"
@@ -114,22 +110,18 @@ payload ++ {
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Logger" doc:id="24be7020-7874-4c17-9e05-46a4e17de8cb" message="#[output application/json --- payload]"/>
 				</batch:step>
 				<batch:step name="upsertIn-salesforce-fox-step"
 					doc:id="8d0f79fc-9e95-4bea-8e85-0e74dc6c7a80"
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateA &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
 						doc:id="5be842bf-b2d7-49cf-9796-13eb053fbd6c" size="${page.size}">
-						<logger level="INFO" doc:name="Logger" doc:id="fd41c12f-46c9-4a72-9273-56ba41de903e" message="******************************************************************************"/>
-						<logger level="INFO" doc:name="Logger" doc:id="3ea27f71-3d8d-4e2c-bc1f-6a72dcf4f4fb" message='#[{&#10;	"Division__c": (vars.vInitialized.division filter ((item, index) -&gt; item.Name == item.Division__c)).Id&#10;	&#10;	}]'/>
 						<ee:transform doc:name="Prepare Account  for Upsert"
 							doc:id="5edef759-31d6-49af-a462-c9b94df858df">
 							<ee:message>
 								<ee:set-payload resource="dwl/newToFox.dwl" />
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="Logger" doc:id="758c8004-22e4-405e-9192-a93e402bdac2" message="#[payload]"/>
 						<salesforce:upsert externalIdFieldName="Id"
 							doc:name="Upsert Account in Salesforce fox"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"

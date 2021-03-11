@@ -80,12 +80,12 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<salesforce:query doc:name="Query Contact with filtering criteria from Salesforce Fox Org" config-ref="Salesforce_Sfdc_fox_org_config">
 			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, FirstName, LastName, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
 Last_date_of_contact__c, Credentialing_Status__c, Primary_Specialty__c, NPI_Number__c, Degree__c, Has_Adverse_History__c, LastModifiedDate,
-Preferences_History__c from Contact WHERE RecordTypeId = :recordTypeId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
+Preferences_History__c from Contact WHERE RecordTypeId = :providerId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
-	"recordTypeId" : vars.vInitialized.recordType.providerId,
-	"lastModifiedDate" : vars.lastQueryDateA
+	"lastModifiedDate" : vars.lastQueryDateA,
+	"providerId" : vars.vInitialized.recordType.providerId
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<logger level="INFO" doc:name="Logger" doc:id="16f60841-9411-4600-875a-53beb1ad1c53" message="#[payload]"/>
@@ -93,7 +93,6 @@ Preferences_History__c from Contact WHERE RecordTypeId = :recordTypeId AND LastM
 			objectStore="watermarkStoreA" doc:name="Store lastQueryDateA">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateA]]]></os:value>
 		</os:store>
-		<logger level="INFO" doc:name="Logger" doc:id="f86ae0fc-f7e5-456c-b4e8-8239fe064738" message="#[payload]"/>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b3eff7a8-fd88-4b2e-9c60-702403b9a5e8" >
 				<os:store doc:name="Set sync state to fromA" doc:id="f3b320bb-2e86-457a-82ee-120c22489fce" key="syncState" objectStore="SchedulerStatus">
@@ -111,13 +110,13 @@ Preferences_History__c from Contact WHERE RecordTypeId = :recordTypeId AND LastM
 			<salesforce:salesforce-query><![CDATA[SELECT OwnerId, RecordTypeId, FirstName, LastName, 
 CreatedById, PersonEmail, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
 PersonLastCUUpdateDate, PersonMailingAddress, PersonMobilePhone, Division__c
-FROM Account WHERE RecordTypeId = :recordTypeId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
+FROM Account WHERE RecordTypeId = :personId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
 ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
-	"recordTypeId" : vars.vInitialized.recordType.personId,
-	"lastModifiedDate" : vars.lastQueryDateB
+	"lastModifiedDate" : vars.lastQueryDateB,
+	"personId" : vars.vInitialized.recordType.personId
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<logger level="INFO" doc:name="Logger" doc:id="6afbdd3e-a336-4723-806c-c837e709ccd0" message="#[payload]"/>

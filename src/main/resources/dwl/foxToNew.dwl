@@ -4,7 +4,7 @@ output application/java
 //Fox to New
 payload map ((item) -> {
 	(Id: item.Id) if (item.Id != null),
-	RecordTypeId: p('personAccount.recordTypeId'),
+	RecordTypeId: vars.vInitialized.recordType.personId,
 	FirstName: item.FirstName,
 	LastName: item.LastName,
 	PersonEmail: item.Email,
