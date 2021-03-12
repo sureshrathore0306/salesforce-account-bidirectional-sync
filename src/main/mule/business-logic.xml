@@ -24,7 +24,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					<salesforce:query
 						doc:name="Query Single Account from New"
 						doc:id="783b2ca3-1ace-4f8b-bc6d-d64b59563878" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_new_org_config"
+						targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE LastName= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -61,7 +62,9 @@ payload ++ {
 							doc:name="Upsert Account in Salesforce New"
 							doc:id="4a36339e-9efd-4264-a864-ddbdbc0b1732"
 							config-ref="Salesforce_Sfdc_new_org_config" objectType="Account" />
-						<logger level="INFO" doc:name="Logger" doc:id="8ad729e4-d65a-4c39-be69-eb2be124964b" message="#[output application/json&#10;---&#10;payload]"/>
+						<logger level="INFO" doc:name="Logger"
+							doc:id="8ad729e4-d65a-4c39-be69-eb2be124964b"
+							message="#[output application/json&#10;---&#10;payload]" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -89,7 +92,8 @@ payload ++ {
 					<salesforce:query
 						doc:name="Query Single Account from Fox"
 						doc:id="6c580c53-b898-4ef2-80c3-2faeda43273d" target="IdDateInA"
-						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
+						config-ref="Salesforce_Sfdc_fox_org_config"
+						targetValue="#[payload[0]]">
 						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Contact WHERE LastName= ':Name']]></salesforce:salesforce-query>
 						<salesforce:parameters><![CDATA[#[output applicaton/java
 ---
@@ -126,7 +130,9 @@ payload ++ {
 							doc:name="Upsert Account in Salesforce fox"
 							doc:id="c46631db-c257-4332-80b3-8103dbb7901b"
 							config-ref="Salesforce_Sfdc_fox_org_config" objectType="Contact" />
-						<logger level="INFO" doc:name="Logger" doc:id="3ad59da9-8d84-4b35-a223-255483cb67f0" message="#[output application/json&#10;---&#10;payload]"/>
+						<logger level="INFO" doc:name="Logger"
+							doc:id="3ad59da9-8d84-4b35-a223-255483cb67f0"
+							message="#[output application/json&#10;---&#10;payload]" />
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
@@ -144,106 +150,51 @@ payload ++ {
 		</error-handler>
 	</flow>
 
-	<flow name="delete-account-salesofrce-org-B-to-org-A">
-		<batch:job jobName="AccountFromBtoA-Batch_Job"
-			doc:id="3eef6e35-6fc9-4e28-a5a6-35cd86754ec4">
-			<batch:process-records>
-				<batch:step name="queryAccountFromBStep"
-					doc:id="919b6731-ed5a-4af5-a6c7-bb91de6aeb12">
-					<salesforce:query
-						doc:name="Query Single Account from Salesforce A"
-						doc:id="989f14d9-5129-410c-8600-f754d1cbd932" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account WHERE LastName= ':Name']]></salesforce:salesforce-query>
-						<salesforce:parameters><![CDATA[#[output applicaton/java
----
-{
-	"Name" : payload.LastName
-}]]]></salesforce:parameters>
-					</salesforce:query>
-					<ee:transform
-						doc:name="Add SFDC Account Id to payload"
-						doc:id="31525faf-d311-41bc-9047-5d651d3b28c8">
-						<ee:message>
-							<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-payload ++ {
-	toDeleteFromA: payload.email__c == vars.IdDateInB.email__c,
-	accountId: vars.IdDateInB.Id
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-				</batch:step>
-				<batch:step name="Delete-Record-Batch-Step"
-					doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df"
-					acceptExpression="#[payload.toDeleteFromA == true]">
-					<batch:aggregator doc:name="Batch Aggregator" doc:id="44af0559-4238-4444-ba3b-93ba3aad93d5" size="${page.size}">
-						<salesforce:delete doc:name="Delete Account From Org A" doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5" config-ref="Salesforce_Sfdc_fox_org_config">
-						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
-					</salesforce:delete>
-					</batch:aggregator>
-				</batch:step>
-			</batch:process-records>
-		</batch:job>
-		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2f63dd68-8d4b-4d51-a0fa-cb9abbb4307a" >
-				<os:store doc:name="Set sync state to fromB" doc:id="1dc19524-3b93-41a5-988c-f5249566d592" key="syncState" objectStore="SchedulerStatus" >
-					<os:value ><![CDATA[fromB]]></os:value>
-				</os:store>
-			</on-error-continue>
-		</error-handler>
-	</flow>
-
-	<flow name="delete-account-salesofrce-org-A-to-org-B">
-		<batch:job jobName="AccountFromAtoB-Batch_Job"
-			doc:id="9237e77f-a77f-4594-9308-ac3cb72d60b1">
-			<batch:process-records>
-				<batch:step name="queryAccountFromBStep"
-					doc:id="9f56e09e-483e-4ecd-a274-6b4e9a4e4bd9">
-					<salesforce:query
-						doc:name="Query Single Account from Salesforce B"
-						doc:id="01ec6599-5df5-4ff2-b8b6-330a7cdca23c" target="IdDateInB"
-						config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]">
-						<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE email__c= ':email__c']]></salesforce:salesforce-query>
-						<salesforce:parameters><![CDATA[#[output applicaton/java
----
-{
-	"email__c" : payload.email__c
-}]]]></salesforce:parameters>
-					</salesforce:query>
-					<ee:transform
-						doc:name="Add SFDC Account Id to payload"
-						doc:id="d43ac60d-8701-4d0d-820d-8b8ebafbb2b1">
-						<ee:message>
-							<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-payload ++ {
-	toDeleteFromB: payload.email__c == vars.IdDateInB.email__c,
-	accountId: vars.IdDateInB.Id
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-				</batch:step>
-				<batch:step name="Delete-Record-Batch-Step"
-					doc:id="91631639-de31-40fe-a118-1c401a6ef8e3"
-					acceptExpression="#[payload.toDeleteFromB == true]">
-					<batch:aggregator doc:name="Batch Aggregator" doc:id="5d5caa0c-5481-4eb3-83fb-7cfa80f80584" size="${page.size}">
-						<salesforce:delete doc:name="Delete Account From Org B" doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e" config-ref="Salesforce_Sfdc_new_org_config">
-						<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids>
-					</salesforce:delete>
-					</batch:aggregator>
-				</batch:step>
-			</batch:process-records>
-		</batch:job>
-		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1e10f31d-2dcf-41a9-9342-3124cbc42c36" >
-				<os:store doc:name="Set sync state to fromA" doc:id="5db174a0-5716-469e-99df-c0cde093f1d8" key="syncState" objectStore="SchedulerStatus" >
-					<os:value ><![CDATA[fromA]]></os:value>
-				</os:store>
-			</on-error-continue>
-		</error-handler>
-	</flow>
-
+	<!-- <flow name="delete-account-salesofrce-org-B-to-org-A"> <batch:job jobName="AccountFromBtoA-Batch_Job" 
+		doc:id="3eef6e35-6fc9-4e28-a5a6-35cd86754ec4"> <batch:process-records> <batch:step 
+		name="queryAccountFromBStep" doc:id="919b6731-ed5a-4af5-a6c7-bb91de6aeb12"> 
+		<salesforce:query doc:name="Query Single Account from Salesforce A" doc:id="989f14d9-5129-410c-8600-f754d1cbd932" 
+		target="IdDateInB" config-ref="Salesforce_Sfdc_fox_org_config" targetValue="#[payload[0]]"> 
+		<salesforce:salesforce-query><![CDATA[SELECT Id, LastModifiedDate FROM Account 
+		WHERE LastName= ':Name']]></salesforce:salesforce-query> <salesforce:parameters><![CDATA[#[output 
+		applicaton/java -&#45;&#45; { "Name" : payload.LastName }]]]></salesforce:parameters> 
+		</salesforce:query> <ee:transform doc:name="Add SFDC Account Id to payload" 
+		doc:id="31525faf-d311-41bc-9047-5d651d3b28c8"> <ee:message> <ee:set-payload><![CDATA[%dw 
+		2.0 output application/java -&#45;&#45; payload ++ { toDeleteFromA: payload.email__c 
+		== vars.IdDateInB.email__c, accountId: vars.IdDateInB.Id }]]></ee:set-payload> 
+		</ee:message> </ee:transform> </batch:step> <batch:step name="Delete-Record-Batch-Step" 
+		doc:id="5c9a4b04-9a2d-4d37-911d-60d663f3d6df" acceptExpression="#[payload.toDeleteFromA 
+		== true]"> <batch:aggregator doc:name="Batch Aggregator" doc:id="44af0559-4238-4444-ba3b-93ba3aad93d5" 
+		size="${page.size}"> <salesforce:delete doc:name="Delete Account From Org 
+		A" doc:id="23bbf3f2-9296-4db1-8615-7a99f8d77ac5" config-ref="Salesforce_Sfdc_fox_org_config"> 
+		<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids> </salesforce:delete> 
+		</batch:aggregator> </batch:step> </batch:process-records> </batch:job> <error-handler> 
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On 
+		Error Continue" doc:id="2f63dd68-8d4b-4d51-a0fa-cb9abbb4307a"> <os:store 
+		doc:name="Set sync state to fromB" doc:id="1dc19524-3b93-41a5-988c-f5249566d592" 
+		key="syncState" objectStore="SchedulerStatus"> <os:value><![CDATA[fromB]]></os:value> 
+		</os:store> </on-error-continue> </error-handler> </flow> <flow name="delete-account-salesofrce-org-A-to-org-B"> 
+		<batch:job jobName="AccountFromAtoB-Batch_Job" doc:id="9237e77f-a77f-4594-9308-ac3cb72d60b1"> 
+		<batch:process-records> <batch:step name="queryAccountFromBStep" doc:id="9f56e09e-483e-4ecd-a274-6b4e9a4e4bd9"> 
+		<salesforce:query doc:name="Query Single Account from Salesforce B" doc:id="01ec6599-5df5-4ff2-b8b6-330a7cdca23c" 
+		target="IdDateInB" config-ref="Salesforce_Sfdc_new_org_config" targetValue="#[payload[0]]"> 
+		<salesforce:salesforce-query><![CDATA[SELECT Id, email__c FROM Account WHERE 
+		email__c= ':email__c']]></salesforce:salesforce-query> <salesforce:parameters><![CDATA[#[output 
+		applicaton/java -&#45;&#45; { "email__c" : payload.email__c }]]]></salesforce:parameters> 
+		</salesforce:query> <ee:transform doc:name="Add SFDC Account Id to payload" 
+		doc:id="d43ac60d-8701-4d0d-820d-8b8ebafbb2b1"> <ee:message> <ee:set-payload><![CDATA[%dw 
+		2.0 output application/java -&#45;&#45; payload ++ { toDeleteFromB: payload.email__c 
+		== vars.IdDateInB.email__c, accountId: vars.IdDateInB.Id }]]></ee:set-payload> 
+		</ee:message> </ee:transform> </batch:step> <batch:step name="Delete-Record-Batch-Step" 
+		doc:id="91631639-de31-40fe-a118-1c401a6ef8e3" acceptExpression="#[payload.toDeleteFromB 
+		== true]"> <batch:aggregator doc:name="Batch Aggregator" doc:id="5d5caa0c-5481-4eb3-83fb-7cfa80f80584" 
+		size="${page.size}"> <salesforce:delete doc:name="Delete Account From Org 
+		B" doc:id="5ea022e1-5abc-49db-a2e6-b97e7c458f5e" config-ref="Salesforce_Sfdc_new_org_config"> 
+		<salesforce:ids><![CDATA[#[payload.accountId]]]></salesforce:ids> </salesforce:delete> 
+		</batch:aggregator> </batch:step> </batch:process-records> </batch:job> <error-handler> 
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On 
+		Error Continue" doc:id="1e10f31d-2dcf-41a9-9342-3124cbc42c36"> <os:store 
+		doc:name="Set sync state to fromA" doc:id="5db174a0-5716-469e-99df-c0cde093f1d8" 
+		key="syncState" objectStore="SchedulerStatus"> <os:value><![CDATA[fromA]]></os:value> 
+		</os:store> </on-error-continue> </error-handler> </flow> -->
 </mule>

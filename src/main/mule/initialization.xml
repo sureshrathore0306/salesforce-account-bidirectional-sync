@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+<mule
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
 	<flow name="initialization-valuesFlow"
@@ -32,8 +34,8 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 			</salesforce:query>
 			<set-payload
 				value='#[output application/json&#10;---&#10;{&#10;"division": vars.vDivision,&#10;"recordType": {&#10;"providerId":vars.vContactProviderId.Id[0],&#10;"personId":vars.vPersonAccountId.Id[0]&#10;}&#10;}]'
-				doc:name="Set Final Payload" doc:id="013f1190-bee3-4dee-842d-85bb11f4d5c9" />
+				doc:name="Set Final Payload"
+				doc:id="013f1190-bee3-4dee-842d-85bb11f4d5c9" />
 		</ee:cache>
 	</flow>
-
 </mule>
