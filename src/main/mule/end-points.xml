@@ -80,7 +80,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<salesforce:query doc:name="Query Contact with filtering criteria from Salesforce Fox Org" config-ref="Salesforce_Sfdc_fox_org_config">
 			<salesforce:salesforce-query><![CDATA[Select OwnerId, Birthdate, CreatedById, FirstName, LastName, Email, Phone, LastModifiedById, MobilePhone, Division_Code__c, Team__c, 
 Last_date_of_contact__c, Credentialing_Status__c, Primary_Specialty__c, NPI_Number__c, Degree__c, Has_Adverse_History__c, LastModifiedDate,
-Preferences_History__c from Contact WHERE RecordTypeId = :providerId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
+Preferences_History__c from Contact WHERE RecordTypeId = ':providerId' AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.fox.userId}' ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
@@ -110,7 +110,7 @@ Preferences_History__c from Contact WHERE RecordTypeId = :providerId AND LastMod
 			<salesforce:salesforce-query><![CDATA[SELECT OwnerId, RecordTypeId, FirstName, LastName, 
 CreatedById, PersonEmail, LastModifiedById, PersonLastCURequestDate, LastModifiedDate,
 PersonLastCUUpdateDate, PersonMailingAddress, PersonMobilePhone, Division__c
-FROM Account WHERE RecordTypeId = :personId AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
+FROM Account WHERE RecordTypeId = ':personId' AND LastModifiedDate > :lastModifiedDate AND LastModifiedById != '${salesforce.new.userId}'
 ]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---

@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 		doc:id="46653c20-87ca-40ff-9efd-e98afca36a2b">
 		<ee:cache doc:name="Cache"
 			doc:id="19b1d310-0666-44fa-ab62-44831917bb3e">
-			<salesforce:query doc:name="Query Devision From Fox"
+			<salesforce:query doc:name="Query Division From Fox"
 				doc:id="e6b96906-bcb7-4e4e-b197-21a1d333a4c9"
 				config-ref="Salesforce_Sfdc_fox_org_config" target="vDivision">
 				<salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Division__c]]></salesforce:salesforce-query>
@@ -24,7 +24,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 				<salesforce:salesforce-query><![CDATA[SELECT Id FROM RecordType WHERE Name='Provider' AND SObjectType='Contact']]></salesforce:salesforce-query>
 			</salesforce:query>
 			<salesforce:query
-				doc:name="Person Account Recotd Type Id"
+				doc:name="Person Account Record Type Id"
 				doc:id="09b0269a-0536-468a-90e5-7ef7a9ac5801"
 				config-ref="Salesforce_Sfdc_new_org_config"
 				target="vPersonAccountId">
