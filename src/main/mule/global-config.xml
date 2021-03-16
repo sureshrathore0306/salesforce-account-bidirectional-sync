@@ -1,12 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
@@ -21,14 +23,33 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		file="common.properties" doc:id="d5773404-5f1d-4b79-ba53-030db5f3d774"
 		doc:name="Configuration properties" />
 
-    <os:object-store name="SchedulerStatus" persistent="false" doc:id="e9862648-2cb3-47db-a763-9275db0a1854" doc:name="Object store" />
-    <os:object-store name="watermarkStoreA" doc:name="Object store" />
-    <os:object-store name="watermarkStoreB" doc:name="Object store" />
-	<salesforce:sfdc-config name="Salesforce_Sfdc_new_org_config" doc:name="Salesforce Config" doc:id="6b75e779-6117-4e1a-8173-13378a926c1b" >
-		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.new.key}" consumerSecret="${secure::salesforce.new.secret}" username="${salesforce.new.username}" password="${secure::salesforce.new.password}" tokenEndpoint="${accesss.token.url}" securityToken="${salesforce.new.securityToken}"/>
+	<os:object-store name="SchedulerStatus"
+		persistent="false" doc:id="e9862648-2cb3-47db-a763-9275db0a1854"
+		doc:name="Object store" />
+	<os:object-store name="watermarkStoreA"
+		doc:name="Object store" />
+	<os:object-store name="watermarkStoreB"
+		doc:name="Object store" />
+	<salesforce:sfdc-config
+		name="Salesforce_Sfdc_new_org_config" doc:name="Salesforce Config"
+		doc:id="6b75e779-6117-4e1a-8173-13378a926c1b">
+		<salesforce:oauth-user-pass-connection
+			consumerKey="${salesforce.new.key}"
+			consumerSecret="${secure::salesforce.new.secret}"
+			username="${salesforce.new.username}"
+			password="${secure::salesforce.new.password}"
+			tokenEndpoint="${accesss.token.url}"
+			securityToken="${salesforce.new.securityToken}" />
 	</salesforce:sfdc-config>
-	<salesforce:sfdc-config name="Salesforce_Sfdc_fox_org_config" doc:name="Salesforce Config" doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496" >
-		<salesforce:oauth-user-pass-connection consumerKey="${salesforce.fox.key}" username="${salesforce.fox.username}" password="${secure::salesforce.fox.password}" tokenEndpoint="${accesss.token.url}" consumerSecret="${secure::salesforce.fox.secret}"/>
+	<salesforce:sfdc-config
+		name="Salesforce_Sfdc_fox_org_config" doc:name="Salesforce Config"
+		doc:id="3eaaa8d6-f0ae-4d07-8d42-d26841501496">
+		<salesforce:oauth-user-pass-connection
+			consumerKey="${salesforce.fox.key}"
+			username="${salesforce.fox.username}"
+			password="${secure::salesforce.fox.password}"
+			tokenEndpoint="${accesss.token.url}"
+			consumerSecret="${secure::salesforce.fox.secret}" />
 	</salesforce:sfdc-config>
 	<secure-properties:config
 		name="Secure_Properties_Config" doc:name="Secure Properties Config"
@@ -43,6 +64,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<http:listener-connection host="0.0.0.0"
 			port="8081" />
 	</http:listener-config>
-
+	<ee:object-store-caching-strategy
+		name="Caching_Strategy" doc:name="Caching Strategy"
+		doc:id="91373b39-bac4-4eb3-a7fb-6a319a9fc7e6">
+		<ee:simple-event-copy-strategy />
+		<os:private-object-store
+			alias="CachingStrategy_ObjectStore" maxEntries="${max.entries}" entryTtl="${entry.ttl}" entryTtlUnit="HOURS" expirationInterval="${expiration.interval}"/>
+	</ee:object-store-caching-strategy>
 
 </mule>
