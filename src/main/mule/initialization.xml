@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<flow name="initialization-values-flow"
 		doc:id="46653c20-87ca-40ff-9efd-e98afca36a2b">
 		<ee:cache doc:name="Cache"
-			doc:id="19b1d310-0666-44fa-ab62-44831917bb3e">
+			doc:id="19b1d310-0666-44fa-ab62-44831917bb3e" cachingStrategy-ref="Caching_Strategy">
 			<salesforce:query doc:name="Query Division From Fox"
 				doc:id="e6b96906-bcb7-4e4e-b197-21a1d333a4c9"
 				config-ref="Salesforce_Sfdc_fox_org_config" target="vDivision">
