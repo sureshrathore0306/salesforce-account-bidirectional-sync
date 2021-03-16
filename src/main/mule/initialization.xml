@@ -9,7 +9,7 @@
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
-	<flow name="initialization-valuesFlow"
+	<flow name="initialization-values-flow"
 		doc:id="46653c20-87ca-40ff-9efd-e98afca36a2b">
 		<ee:cache doc:name="Cache"
 			doc:id="19b1d310-0666-44fa-ab62-44831917bb3e">

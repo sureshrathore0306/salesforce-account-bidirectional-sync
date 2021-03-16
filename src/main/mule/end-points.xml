@@ -20,18 +20,18 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					startDelay="${scheduler.startDelay}" timeUnit="SECONDS" />
 			</scheduling-strategy>
 		</scheduler>
-		<flow-ref doc:name="Refer To initialization-valuesFlow"
+		<flow-ref doc:name="initialization-values-flow"
 			doc:id="b735433c-9f7f-4599-b1b6-0b794b893666"
-			name="initialization-valuesFlow" target="vInitialized" />
+			name="initialization-values-flow" target="vInitialized" />
 		<os:retrieve key="syncState"
 			doc:name="Retrieve sync state" objectStore="SchedulerStatus"
 			target="syncState">
-			<os:default-value><![CDATA[fromA]]></os:default-value>
+			<os:default-value><![CDATA[fromFox]]></os:default-value>
 
 		</os:retrieve>
 		<choice doc:name="SyncState?"
 			doc:id="b4703d83-780b-4e2d-bf5d-51b1566d66e2">
-			<when expression="#[vars.syncState == 'fromA']">
+			<when expression="#[vars.syncState == 'fromFox']">
 				<logger level="INFO" doc:name="LOG running from fox"
 					doc:id="d3619f57-3984-49cf-b45c-a9b36047d05d"
 					message="running from Fox" />
@@ -54,10 +54,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<os:store doc:name="set-sync-state-to-from-new"
 					doc:id="d2514c12-1e27-4f61-a4b8-ae438eb84545" key="syncState"
 					objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromB]]></os:value>
+					<os:value><![CDATA[fromNew]]></os:value>
 				</os:store>
 			</when>
-			<when expression="#[vars.syncState == 'fromB']">
+			<when expression="#[vars.syncState == 'fromNew']">
 				<logger level="INFO" doc:name="LOG running from New"
 					doc:id="d8b84a80-a7ae-4f3e-aafe-1ac5a4f71e7c"
 					message="running from New" />
@@ -80,7 +80,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<os:store doc:name="set-sync-state-to-from-fox"
 					doc:id="24048aea-fe6b-49b9-b7d7-580c81fa6c26" key="syncState"
 					objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromA]]></os:value>
+					<os:value><![CDATA[fromFox]]></os:value>
 				</os:store>
 			</when>
 			<otherwise>
@@ -101,8 +101,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</flow>
 
 	<flow name="sf-sfdc-query-flow-fox">
-		<os:retrieve key="watermark" objectStore="watermarkStoreA"
-			target="lastQueryDateA" doc:name="Retrieve lastQueryDateA">
+		<os:retrieve key="watermark" objectStore="watermarkStoreFox"
+			target="lastQueryDateA" doc:name="Retrieve lastQueryDateFox">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query
@@ -121,24 +121,24 @@ Preferences_History__c from Contact WHERE RecordTypeId = ':providerId' AND LastM
 		<logger level="INFO" doc:name="Logger"
 			doc:id="16f60841-9411-4600-875a-53beb1ad1c53" message="#[payload]" />
 		<os:store key="watermark" failOnNullValue="false"
-			objectStore="watermarkStoreA" doc:name="Store lastQueryDateA">
+			objectStore="watermarkStoreFox" doc:name="Store lastQueryDateFox">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateA]]]></os:value>
 		</os:store>
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
 				doc:id="b3eff7a8-fd88-4b2e-9c60-702403b9a5e8">
-				<os:store doc:name="Set sync state to fromA"
+				<os:store doc:name="Set sync state to fromFox"
 					doc:id="f3b320bb-2e86-457a-82ee-120c22489fce" key="syncState"
 					objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromA]]></os:value>
+					<os:value><![CDATA[fromFox]]></os:value>
 				</os:store>
 			</on-error-continue>
 		</error-handler>
 	</flow>
 	<flow name="sf-sfdc-query-flow-new">
-		<os:retrieve key="watermark" objectStore="watermarkStoreB"
-			target="lastQueryDateB" doc:name="Retrieve lastQueryDateB">
+		<os:retrieve key="watermark" objectStore="watermarkStoreNew"
+			target="lastQueryDateB" doc:name="Retrieve lastQueryDateNew">
 			<os:default-value><![CDATA[#[p('watermark.default.expression') as String]]]></os:default-value>
 		</os:retrieve>
 		<salesforce:query
@@ -158,19 +158,19 @@ FROM Account WHERE RecordTypeId = ':personId' AND LastModifiedDate > :lastModifi
 		</salesforce:query>
 		<logger level="INFO" doc:name="Logger"
 			doc:id="6afbdd3e-a336-4723-806c-c837e709ccd0" message="#[payload]" />
-		<os:store key="watermark" doc:name="Store lastQueryDateB"
+		<os:store key="watermark" doc:name="Store lastQueryDateNew"
 			doc:id="b995ea0e-c89f-40ac-9f6e-0e06096f5abc"
-			objectStore="watermarkStoreB">
+			objectStore="watermarkStoreNew">
 			<os:value><![CDATA[#[if (sizeOf(payload) != 0) (max(payload map $.LastModifiedDate) as String) else vars.lastQueryDateB]]]></os:value>
 		</os:store>
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
 				doc:id="7871de9e-a21a-415a-8366-eae8b679dca7">
-				<os:store doc:name="Set sync state to fromB"
+				<os:store doc:name="Set sync state to fromNew"
 					doc:id="a6ceb2fe-8b25-453b-8409-cc935945061e" key="syncState"
 					objectStore="SchedulerStatus">
-					<os:value><![CDATA[fromB]]></os:value>
+					<os:value><![CDATA[fromNew]]></os:value>
 				</os:store>
 			</on-error-continue>
 		</error-handler>
