@@ -11,7 +11,7 @@
 		<environment>Sandbox</environment>
 		<worker.type>MICRO</worker.type>
 	</properties>
-	<groupId>com.apisero</groupId>
+	<groupId>com.chghealthcare</groupId>
 	<artifactId>sfdc2sfdc-account-bidirectional-sync</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
