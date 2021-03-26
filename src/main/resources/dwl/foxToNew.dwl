@@ -11,5 +11,7 @@ payload map ((item) -> {
 	Phone: item.Phone,
 	PersonMobilePhone: item.MobilePhone,
 	Division__c: item.Division_Code__c,
-	PersonBirthdate: item.Birthdate
+	PersonBirthdate: item.Birthdate as Date {format: 'yyyy-MM-dd'},
+	Last_Two_way_Contact__c: item.Last_date_of_contact__c as Date {format: 'yyyy-MM-dd'},
+	NPI__c:	item.NPI_Number__c	
 })

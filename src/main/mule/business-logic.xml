@@ -52,7 +52,7 @@ payload ++ {
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateB &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
 						doc:id="1df6c548-87de-4cfe-9ebb-412cab2b1499" size="${page.size}">
-						<ee:transform doc:name="Prepare Account for Upsert"
+                        <ee:transform doc:name="Prepare Account for Upsert"
 							doc:id="5263e05a-1baf-4e7d-befd-a210be595768">
 							<ee:message>
 								<ee:set-payload resource="dwl/foxToNew.dwl" />
@@ -120,7 +120,8 @@ payload ++ {
 					acceptExpression="payload.Id == null  or (payload.LastModifiedDateA &lt; payload.LastModifiedDate)">
 					<batch:aggregator doc:name="Batch Aggregator"
 						doc:id="5be842bf-b2d7-49cf-9796-13eb053fbd6c" size="${page.size}">
-						<ee:transform doc:name="Prepare Account  for Upsert"
+						<logger level="INFO" doc:name="Logger" doc:id="7404e0e8-17b5-4bb8-b411-35b024e7427f" message="#[payload[0].PersonBirthdate]"/>
+                        <ee:transform doc:name="Prepare Account  for Upsert"
 							doc:id="5edef759-31d6-49af-a462-c9b94df858df">
 							<ee:message>
 								<ee:set-payload resource="dwl/newToFox.dwl" />
